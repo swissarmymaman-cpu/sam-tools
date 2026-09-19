@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM Sleep Self-Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal: #2C5F5D;
+  --teal-mid: #3D7A78;
+  --teal-light: #E8F2F1;
+  --teal-mid-tone: #9FE1CB;
+  --teal-pale: #E1F5EE;
+  --cream: #F7F4EF;
+  --cream-dark: #EDE8E0;
+  --ink: #1A1A18;
+  --ink-mid: #4A4A45;
+  --ink-light: #8A8A82;
+  --amber: #BA7517;
+  --red: #A32D2D;
+  --white: #ffffff;
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+.app-header { background: var(--teal); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
+.header-left { display: flex; flex-direction: column; gap: 1px; }
+.header-title { font-size: 13px; font-weight: 600; color: white; letter-spacing: 0.02em; line-height: 1.2; }
+.header-tagline { font-size: 9.5px; font-weight: 300; color: rgba(255,255,255,0.65); letter-spacing: 0.04em; line-height: 1.2; }
+.header-logo { width: 38px; height: 38px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.header-logo img { width: 34px; height: 34px; object-fit: contain; }
+.page { max-width: 520px; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; }
+.screen { display: none; }
+.screen.active { display: block; }
+.badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; letter-spacing: 0.03em; }
+.badge-pillar { background: var(--teal); color: white; }
+.badge-type { background: var(--teal-light); color: var(--teal); border: 1px solid rgba(44,95,93,0.2); }
+.badge-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.6); display: inline-block; margin: 0 2px; }
+.badge-lang { background: transparent; color: var(--teal); border: 1px solid var(--teal); cursor: pointer; margin-left: auto; transition: all 0.15s; }
+.badge-lang:hover { background: var(--teal); color: white; }
+.badge-lang.active { background: var(--teal); color: white; }
+h1 { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+.intro-body { font-size: 14px; color: var(--ink-mid); line-height: 1.7; font-weight: 400; margin-bottom: 1.25rem; }
+.note { font-size: 12px; color: var(--ink-light); background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1.75rem; line-height: 1.6; font-weight: 400; }
+.start-btn { width: 100%; padding: 14px; background: var(--teal); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; letter-spacing: 0.02em; transition: background 0.15s; }
+.start-btn:hover { background: var(--teal-mid); }
+.progress-bar { height: 3px; background: var(--cream-dark); border-radius: 2px; margin-bottom: 1.75rem; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.3s ease; }
+.q-counter { font-size: 11px; color: var(--ink-light); font-weight: 500; margin-bottom: 0.4rem; letter-spacing: 0.03em; }
+.q-dim-label { font-size: 11px; font-weight: 600; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+.q-text { font-size: 17px; font-weight: 500; color: var(--ink); line-height: 1.45; margin-bottom: 1.75rem; letter-spacing: -0.01em; }
+.options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.75rem; }
+.option-btn { width: 100%; padding: 13px 16px; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 400; color: var(--ink-mid); cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; transition: all 0.15s; }
+.option-btn:hover { border-color: var(--teal-mid); background: var(--teal-light); color: var(--teal); }
+.option-btn.selected { border-color: var(--teal); background: var(--teal-light); color: var(--teal); font-weight: 500; }
+.option-num { width: 26px; height: 26px; border-radius: 50%; background: var(--cream); border: 1px solid var(--cream-dark); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; transition: all 0.15s; }
+.option-btn.selected .option-num { background: var(--teal); border-color: var(--teal); color: white; }
+.nav-row { display: flex; gap: 10px; }
+.back-btn { padding: 12px 18px; background: transparent; border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: background 0.15s; }
+.back-btn:hover { background: var(--white); }
+.next-btn { flex: 1; padding: 12px; background: var(--teal); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; opacity: 0.35; pointer-events: none; letter-spacing: 0.02em; transition: opacity 0.15s, background 0.15s; }
+.next-btn.enabled { opacity: 1; pointer-events: auto; }
+.next-btn.enabled:hover { background: var(--teal-mid); }
+.result-header { margin-bottom: 1.5rem; }
+.result-score-row { display: flex; align-items: flex-end; gap: 4px; margin-bottom: 0.25rem; }
+.result-score-num { font-size: 56px; font-weight: 600; line-height: 1; color: var(--teal); letter-spacing: -0.02em; }
+.result-score-max { font-size: 22px; color: var(--ink-light); font-weight: 300; margin-bottom: 6px; }
+.result-label { font-size: 11px; color: var(--ink-light); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.result-interp { font-size: 14px; font-weight: 500; line-height: 1.5; }
+.result-interp.good { color: var(--teal); }
+.result-interp.mid { color: var(--amber); }
+.result-interp.low { color: var(--red); }
+.chart-wrap { background: var(--white); border-radius: var(--radius-lg); padding: 1.5rem 1rem; margin-bottom: 1.25rem; border: 1px solid var(--cream-dark); display: flex; justify-content: center; }
+.dim-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+.dim-pill { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; }
+.dim-pill-label { font-size: 9px; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; margin-bottom: 4px; }
+.dim-pill-score { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.dim-pill-score.good { color: var(--teal); }
+.dim-pill-score.mid { color: var(--amber); }
+.dim-pill-score.low { color: var(--red); }
+.lever-block { border-radius: var(--radius); padding: 1.25rem; margin-bottom: 10px; }
+.lever-block.primary { background: var(--teal-pale); border: 1px solid var(--teal-mid-tone); }
+.lever-block.secondary { background: var(--white); border: 1px solid var(--cream-dark); }
+.lever-eyebrow { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal); margin-bottom: 6px; }
+.lever-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; line-height: 1.4; }
+.lever-text { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 400; }
+.sleep-link { color: var(--teal); text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
+.retake-note { font-size: 12px; color: var(--ink-light); line-height: 1.6; margin-bottom: 1.25rem; margin-top: 1rem; padding: 10px 14px; background: var(--white); border-radius: var(--radius-sm); border: 1px solid var(--cream-dark); font-weight: 400; }
+.reset-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: background 0.15s; }
+.reset-btn:hover { background: var(--white); }
+.disclaimer { font-size: 10px; color: var(--ink-light); text-align: center; margin-top: 2rem; line-height: 1.7; font-weight: 400; }
+.disclaimer a { color: var(--teal); text-underline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <div class="header-title">Swiss Army Mum</div>
+    <div class="header-tagline">Not every tool. Just the right ones.</div>
+  </div>
+  <div class="header-logo">
+    <img src="https://app.swissarmymum.com/icons/logo-stamp.png" alt="SAM logo" id="logo-img"
+      onerror="document.getElementById('logo-img').style.display='none';document.getElementById('logo-svg').style.display='block'">
+    <svg id="logo-svg" style="display:none" viewBox="0 0 40 40" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="18" fill="#2C5F5D"/>
+      <g stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M20 10 L20 20 L26 23"/>
+        <circle cx="20" cy="20" r="8"/>
+        <path d="M14 7 L20 10 L26 7"/>
+        <path d="M14 33 L20 30 L26 33"/>
+        <path d="M7 14 L10 20 L7 26"/>
+        <path d="M33 14 L30 20 L33 26"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="page">
+
+<div id="screen-intro" class="screen active">
+  <div class="badges">
+    <span class="badge badge-pillar" id="badge-pillar-intro">Body<span class="badge-dot"></span>Sleep</span>
+    <span class="badge badge-type" id="badge-type-intro"></span>
+    <button class="badge badge-lang" id="lang-toggle-intro" onclick="toggleLang()"></button>
+  </div>
+  <h1 id="intro-h1"></h1>
+  <p class="intro-body" id="intro-body"></p>
+  <div class="note" id="intro-note"></div>
+  <button class="start-btn" id="start-btn" onclick="startAssessment()"></button>
+</div>
+
+<div id="screen-question" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="q-counter" id="qCounter"></div>
+  <div class="q-dim-label" id="qDim"></div>
+  <div class="q-text" id="qText"></div>
+  <div class="options" id="options"></div>
+  <div class="nav-row">
+    <button class="back-btn" id="back-btn" onclick="goBack()"></button>
+    <button class="next-btn" id="nextBtn" onclick="goNext()"></button>
+  </div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="badges">
+    <span class="badge badge-pillar" id="badge-pillar-result">Body<span class="badge-dot"></span>Sleep</span>
+    <span class="badge badge-type" id="badge-type-result"></span>
+  </div>
+  <div class="result-header">
+    <div class="result-label" id="score-label"></div>
+    <div class="result-score-row">
+      <div class="result-score-num" id="scoreNum"></div>
+      <div class="result-score-max">/24</div>
+    </div>
+    <div class="result-interp" id="scoreInterp"></div>
+  </div>
+  <div class="chart-wrap"><canvas id="radarChart" width="260" height="260"></canvas></div>
+  <div class="dim-grid" id="dimGrid"></div>
+  <div id="levers"></div>
+  <div class="retake-note" id="retakeNote"></div>
+  <button class="reset-btn" id="reset-btn" onclick="resetAll()"></button>
+  <p class="disclaimer" id="disclaimer"></p>
+</div>
+
+</div>
+
+<script>
+const strings = {
+  en: {
+    badgeType: 'Self-assessment',
+    langToggle: 'ES',
+    introH1: 'How well are you actually sleeping?',
+    introBody: 'Six questions. One minute. A clear picture of where your sleep stands across the dimensions that predict long-term health, not just how many hours you get.',
+    introNote: 'No data is stored. Your answers stay in your browser and disappear when you close the tab. Screenshot your result if you want to track it over time.',
+    startBtn: 'Start the assessment',
+    backBtn: 'Back',
+    nextBtn: 'Next',
+    seeResult: 'See my result',
+    scoreLabel: 'Sleep health score',
+    interpGood: 'Strong sleep health. Fine-tune the weakest dimension.',
+    interpMid: 'Moderate sleep health. One focused change will move the needle.',
+    interpLow: 'Sleep health needs attention. Start with the 80/20 lever below.',
+    goDeeper: 'Go deeper',
+    goDeeperTitle: 'Read the full sleep science',
+    goDeeperText: 'The SAM sleep post covers the mechanisms behind every dimension of sleep health, what actually matters, and what you can safely ignore.',
+    goDeeperLink: 'Sleep: The Non-Negotiable Foundation →',
+    lever80: 'Your 80/20 lever',
+    retakeBtn: 'Retake the assessment',
+    retakeNote: (date, total) => `<strong>Score on ${date}: ${total}/24.</strong> Note this somewhere. Come back after 7 days of applying the lever above and retake to see if the needle moved.`,
+    disclaimer: `Adapted from sleep health research frameworks.<br><br>
+<span style="display:block;margin-bottom:4px">Buysse DJ. Sleep health: can we define it? Does it matter? <a href="https://doi.org/10.5665/sleep.3298" target="_blank" class="sleep-link"><em>Sleep.</em> 2014;37(1):9–17</a>.</span>
+<span style="display:block;margin-bottom:8px">University of Pittsburgh Sleep Medicine Institute. <a href="https://sleep.pitt.edu/sites/default/files/assets/Ru-SATED%20v4.0_2024_06_04.pdf" target="_blank" class="sleep-link">Ru-SATED v4.0</a>, 2024. © University of Pittsburgh. All rights reserved.</span>
+This is educational, not personal medical advice. Your biology, history, and context matter. Work with a qualified healthcare professional.`,
+    questions: [
+      { dim: 'Regularity', text: 'Do you go to bed and wake up within 30 minutes of the same time each day?' },
+      { dim: 'Satisfaction', text: 'Do you wake up feeling refreshed?' },
+      { dim: 'Alertness', text: 'Can you stay awake all day without needing naps or caffeine?' },
+      { dim: 'Timing', text: 'Does most of your sleep occur between 10 PM and 8 AM?' },
+      { dim: 'Efficiency', text: 'Do you fall asleep within 20 minutes and stay asleep most of the night?' },
+      { dim: 'Duration', text: 'Do you sleep 7–9 hours most nights?' }
+    ],
+    optionLabels: ['Never', 'Rarely', 'Sometimes', 'Usually', 'Always'],
+    qOf: (n) => `${n} of 6`,
+    levers: {
+      0: { title: 'Fix your sleep schedule first', text: 'Same bedtime and wake time every day, including weekends. This is the single highest-leverage change in sleep science. It anchors your circadian rhythm, improves efficiency, and makes everything else easier. Try it for 7 days, then retake this assessment.' },
+      1: { title: 'Look at quality, not just hours', text: 'If you are sleeping enough but not waking refreshed, the culprits are usually alcohol in the evening, eating late, a room that is too warm, or unaddressed stress. Start by cutting alcohol three hours before bed.' },
+      2: { title: 'Cut caffeine after 1 PM', text: 'Caffeine has a half-life of about five hours, meaning half of a 3 PM coffee is still active in your system at 8 PM. Try stopping all caffeine at 13:00 for one week and see if your afternoon alertness improves rather than crashes.' },
+      3: { title: 'Shift your sleep window earlier', text: 'Circadian biology favours sleep between 10 PM and 6 AM for most adults. Late bedtimes reduce the proportion of slow-wave (restorative) sleep even when total hours are the same. Move bedtime 15 minutes earlier every few days rather than jumping straight to an earlier time.' },
+      4: { title: 'Use your bed only for sleep', text: 'If you lie awake for more than 20 minutes, get up and do something calm in dim light until you feel sleepy. Only return to bed when you are ready to sleep. This is the core CBT-I technique and it works by rebuilding the association between bed and sleep.' },
+      5: { title: 'Protect your sleep window', text: 'Most adults need 7–9 hours. If your schedule does not allow it, the problem is the schedule, not your ability to sleep more efficiently with fewer hours. Look at what is eating into your sleep window: late screens, late eating, or an alarm set too early.' }
+    }
+  },
+  es: {
+    badgeType: 'Autoevaluación',
+    langToggle: 'EN',
+    introH1: '¿Cómo estás durmiendo realmente?',
+    introBody: 'Seis preguntas. Un minuto. Una imagen clara del estado de tu sueño en las dimensiones que predicen la salud a largo plazo, más allá de las horas que duermes.',
+    introNote: 'No se guarda ningún dato. Tus respuestas se quedan en tu navegador y desaparecen al cerrar la pestaña. Haz una captura si quieres llevar un seguimiento.',
+    startBtn: 'Empezar la evaluación',
+    backBtn: 'Volver',
+    nextBtn: 'Siguiente',
+    seeResult: 'Ver mi resultado',
+    scoreLabel: 'Tu puntuación de sueño',
+    interpGood: 'Sueño saludable. Trabaja la dimensión más baja para seguir mejorando.',
+    interpMid: 'Sueño moderado. Un cambio concreto puede marcar una diferencia real.',
+    interpLow: 'Tu sueño necesita atención. Empieza por la palanca 80/20 que encontrarás abajo.',
+    goDeeper: 'Para ir más lejos',
+    goDeeperTitle: 'Lee el artículo completo sobre el sueño',
+    goDeeperText: 'El artículo SAM sobre el sueño explica los mecanismos de cada dimensión, qué es lo que de verdad importa y qué puedes ignorar sin problema.',
+    goDeeperLink: 'El sueño: la base sobre la que se construye todo lo demás →',
+    lever80: 'Tu palanca de Pareto',
+    retakeBtn: 'Repetir la evaluación',
+    retakeNote: (date, total) => `<strong>Puntuación del ${date}: ${total}/24.</strong> Anótalo en algún sitio. Vuelve a hacer la evaluación tras 7 días aplicando el cambio de abajo y comprueba si la aguja se ha movido.`,
+    disclaimer: `Adaptado de marcos de investigación sobre salud del sueño.<br><br>
+<span style="display:block;margin-bottom:4px">Buysse DJ. Sleep health: can we define it? Does it matter? <a href="https://doi.org/10.5665/sleep.3298" target="_blank" class="sleep-link"><em>Sleep.</em> 2014;37(1):9–17</a>.</span>
+<span style="display:block;margin-bottom:8px">University of Pittsburgh Sleep Medicine Institute. <a href="https://sleep.pitt.edu/sites/default/files/assets/Ru-SATED%20v4.0_2024_06_04.pdf" target="_blank" class="sleep-link">Ru-SATED v4.0</a>, 2024. © University of Pittsburgh. All rights reserved.</span>
+Esta herramienta es educativa y no sustituye el consejo médico personalizado. Tu biología, historial y contexto son únicos. Consulta con un profesional de la salud.`,
+    questions: [
+      { dim: 'Regularidad', text: '¿Te acuestas y te levantas a una hora similar cada día, con menos de 30 minutos de diferencia?' },
+      { dim: 'Satisfacción', text: '¿Te despiertas sintiéndote descansada?' },
+      { dim: 'Alerta', text: '¿Puedes mantenerte activa durante el día sin necesitar siesta ni cafeína?' },
+      { dim: 'Horario', text: '¿Duermes principalmente entre las 22:00 y las 8:00?' },
+      { dim: 'Eficiencia', text: '¿Te quedas dormida en menos de 20 minutos y permaneces dormida durante la mayor parte de la noche?' },
+      { dim: 'Duración', text: '¿Duermes entre 7 y 9 horas la mayoría de las noches?' }
+    ],
+    optionLabels: ['Nunca', 'Casi nunca', 'A veces', 'Casi siempre', 'Siempre'],
+    qOf: (n) => `Pregunta ${n} de 6`,
+    levers: {
+      0: { title: 'Lo primero: establece un horario de sueño fijo', text: 'Acostarte y levantarte a la misma hora todos los días, incluidos los fines de semana. Es el cambio con mayor impacto en la ciencia del sueño. Regula tu ritmo circadiano, mejora la eficiencia del sueño y hace que todo lo demás sea más fácil. Pruébalo durante 7 días y repite la evaluación.' },
+      1: { title: 'No son las horas, es la calidad', text: 'Si duermes suficientes horas pero no amaneces con energía, los culpables más habituales son el alcohol por la noche, cenar tarde, una habitación con demasiado calor o el estrés acumulado. Empieza por eliminar el alcohol al menos tres horas antes de acostarte.' },
+      2: { title: 'Nada de cafeína después de las 13:00', text: 'La cafeína tiene una vida media de unas cinco horas, lo que significa que la mitad del café de las 15:00 sigue circulando por tu cuerpo a las 20:00. Prueba a cortar la cafeína a mediodía durante una semana y observa si tu energía por la tarde se estabiliza.' },
+      3: { title: 'Adelanta tu hora de dormir', text: 'La biología circadiana favorece dormir entre las 22:00 y las 6:00 en la mayoría de los adultos. Acostarse tarde reduce el tiempo de sueño profundo reparador, aunque en total duermas las mismas horas. Adelanta la hora de acostarte de forma gradual: 15 minutos cada pocos días.' },
+      4: { title: 'La cama es solo para dormir', text: 'Si llevas más de 20 minutos despierta en la cama, levántate y haz algo tranquilo con poca luz hasta que te entre el sueño. Vuelve a la cama solo cuando estés lista para dormir. Es la técnica central de la TCC-I, la intervención más respaldada por la evidencia para el insomnio, y funciona porque reconstruye la asociación entre la cama y el sueño.' },
+      5: { title: 'Protege tu tiempo de sueño', text: 'La mayoría de los adultos necesita entre 7 y 9 horas. Si tu agenda no lo permite, el problema es la agenda, no tu capacidad de descansar. Analiza qué le está comiendo horas a tu sueño: pantallas por la noche, cenas tardías, o un despertador demasiado madrugador.' }
+    }
+  }
+};
+
+const sleepPostUrl = 'https://www.swissarmymum.com/p/sleep';
+let lang = 'en';
+let answers = new Array(6).fill(null);
+let current = 0;
+
+function t() { return strings[lang]; }
+
+function toggleLang() {
+  lang = lang === 'en' ? 'es' : 'en';
+  renderUI();
+}
+
+function renderUI() {
+  const s = t();
+  ['badge-type-intro','badge-type-result'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = s.badgeType; });
+  ['lang-toggle-intro'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = s.langToggle; });
+  const h1 = document.getElementById('intro-h1'); if(h1) h1.textContent = s.introH1;
+  const body = document.getElementById('intro-body'); if(body) body.textContent = s.introBody;
+  const note = document.getElementById('intro-note'); if(note) note.textContent = s.introNote;
+  const startBtn = document.getElementById('start-btn'); if(startBtn) startBtn.textContent = s.startBtn;
+  const backBtn = document.getElementById('back-btn'); if(backBtn) backBtn.textContent = s.backBtn;
+  const resetBtn = document.getElementById('reset-btn'); if(resetBtn) resetBtn.textContent = s.retakeBtn;
+  const disclaimer = document.getElementById('disclaimer'); if(disclaimer) disclaimer.innerHTML = s.disclaimer;
+  const screenQ = document.getElementById('screen-question');
+  if (screenQ && screenQ.classList.contains('active')) renderQuestion();
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startAssessment() {
+  answers = new Array(6).fill(null);
+  current = 0;
+  renderQuestion();
+  show('screen-question');
+}
+
+function renderQuestion() {
+  const s = t();
+  const q = s.questions[current];
+  document.getElementById('progressFill').style.width = ((current / 6) * 100) + '%';
+  document.getElementById('qCounter').textContent = s.qOf(current + 1);
+  document.getElementById('qDim').textContent = q.dim;
+  document.getElementById('qText').textContent = q.text;
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  s.optionLabels.forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn' + (answers[current] === i ? ' selected' : '');
+    btn.innerHTML = `<span class="option-num">${i}</span>${label}`;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = current === 5 ? s.seeResult : s.nextBtn;
+  nextBtn.classList.toggle('enabled', answers[current] !== null);
+  document.getElementById('back-btn').textContent = s.backBtn;
+}
+
+function selectAnswer(v) {
+  answers[current] = v;
+  document.querySelectorAll('.option-btn').forEach((btn, i) => btn.classList.toggle('selected', i === v));
+  document.getElementById('nextBtn').classList.add('enabled');
+}
+
+function goNext() {
+  if (answers[current] === null) return;
+  if (current < 5) { current++; renderQuestion(); }
+  else showResult();
+}
+
+function goBack() {
+  if (current > 0) { current--; renderQuestion(); }
+  else show('screen-intro');
+}
+
+function getScoreClass(v) {
+  if (v >= 3) return 'good';
+  if (v >= 2) return 'mid';
+  return 'low';
+}
+
+function showResult() {
+  const s = t();
+  const total = answers.reduce((a, b) => a + b, 0);
+  document.getElementById('scoreNum').textContent = total;
+  document.getElementById('score-label').textContent = s.scoreLabel;
+
+  const interpEl = document.getElementById('scoreInterp');
+  if (total >= 18) { interpEl.textContent = s.interpGood; interpEl.className = 'result-interp good'; }
+  else if (total >= 12) { interpEl.textContent = s.interpMid; interpEl.className = 'result-interp mid'; }
+  else { interpEl.textContent = s.interpLow; interpEl.className = 'result-interp low'; }
+
+  drawRadar();
+
+  document.getElementById('dimGrid').innerHTML = s.questions.map((q, i) => `
+    <div class="dim-pill">
+      <div class="dim-pill-label">${q.dim}</div>
+      <div class="dim-pill-score ${getScoreClass(answers[i])}">${answers[i]}/4</div>
+    </div>
+  `).join('');
+
+  const lowestIdx = answers.indexOf(Math.min(...answers));
+  const lever = s.levers[lowestIdx];
+
+  document.getElementById('levers').innerHTML = `
+    <div class="lever-block primary">
+      <div class="lever-eyebrow">${s.lever80}</div>
+      <div class="lever-title">${lever.title}</div>
+      <div class="lever-text">${lever.text}</div>
+    </div>
+    <div class="lever-block secondary">
+      <div class="lever-eyebrow">${s.goDeeper}</div>
+      <div class="lever-title">${s.goDeeperTitle}</div>
+      <div class="lever-text">${s.goDeeperText} <a href="${sleepPostUrl}" class="sleep-link" target="_blank">${s.goDeeperLink}</a></div>
+    </div>
+  `;
+
+  const today = new Date().toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('retakeNote').innerHTML = s.retakeNote(today, total);
+  document.getElementById('reset-btn').textContent = s.retakeBtn;
+  document.getElementById('disclaimer').innerHTML = s.disclaimer;
+
+  document.getElementById('progressFill').style.width = '100%';
+  show('screen-result');
+}
+
+function drawRadar() {
+  const s = t();
+  const canvas = document.getElementById('radarChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2, R = 88, n = 6;
+  const dimLabels = s.questions.map(q => q.dim);
+  const angleOffset = -Math.PI / 2;
+  const angles = Array.from({ length: n }, (_, i) => angleOffset + (2 * Math.PI * i) / n);
+
+  ctx.clearRect(0, 0, W, H);
+
+  for (let ring = 1; ring <= 4; ring++) {
+    const r = (R * ring) / 4;
+    ctx.beginPath();
+    angles.forEach((a, i) => { const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+    ctx.closePath(); ctx.strokeStyle = '#EDE8E0'; ctx.lineWidth = 1; ctx.stroke();
+  }
+
+  angles.forEach(a => {
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+    ctx.strokeStyle = '#EDE8E0'; ctx.lineWidth = 1; ctx.stroke();
+  });
+
+  ctx.beginPath();
+  angles.forEach((a, i) => { const val = answers[i] / 4; const x = cx + R * val * Math.cos(a), y = cy + R * val * Math.sin(a); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+  ctx.closePath(); ctx.fillStyle = 'rgba(44,95,93,0.12)'; ctx.fill(); ctx.strokeStyle = '#2C5F5D'; ctx.lineWidth = 2; ctx.stroke();
+
+  angles.forEach((a, i) => {
+    const val = answers[i] / 4; const x = cx + R * val * Math.cos(a), y = cy + R * val * Math.sin(a);
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, 2 * Math.PI); ctx.fillStyle = '#2C5F5D'; ctx.fill();
+  });
+
+  ctx.font = '500 10px Montserrat, sans-serif'; ctx.fillStyle = '#4A4A45'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const labelR = R + 20;
+  angles.forEach((a, i) => { ctx.fillText(dimLabels[i], cx + labelR * Math.cos(a), cy + labelR * Math.sin(a)); });
+}
+
+function resetAll() { answers = new Array(6).fill(null); current = 0; show('screen-intro'); }
+
+renderUI();
+</script>
+</body>
+</html>
