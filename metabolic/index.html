@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM Metabolic Health Self-Assessment</title>
+<link rel="icon" type="image/png" href="https://app.swissarmymum.com/icons/logo-stamp.png">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal: #2C5F5D;
+  --teal-mid: #3D7A78;
+  --teal-light: #E8F2F1;
+  --teal-mid-tone: #9FE1CB;
+  --teal-pale: #E1F5EE;
+  --cream: #F7F4EF;
+  --cream-dark: #EDE8E0;
+  --ink: #1A1A18;
+  --ink-mid: #4A4A45;
+  --ink-light: #8A8A82;
+  --amber: #BA7517;
+  --red: #A32D2D;
+  --white: #ffffff;
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+.app-header { background: var(--teal); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
+.header-left { display: flex; flex-direction: column; gap: 1px; }
+.header-title { font-size: 13px; font-weight: 600; color: white; letter-spacing: 0.02em; line-height: 1.2; }
+.header-tagline { font-size: 9.5px; font-weight: 300; color: rgba(255,255,255,0.65); letter-spacing: 0.04em; line-height: 1.2; }
+.header-logo { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.header-logo img { width: 34px; height: 34px; object-fit: contain; }
+.page { max-width: 520px; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; }
+.screen { display: none; }
+.screen.active { display: block; }
+.badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; letter-spacing: 0.03em; }
+.badge-pillar { background: var(--teal); color: white; }
+.badge-type { background: var(--teal-light); color: var(--teal); border: 1px solid rgba(44,95,93,0.2); }
+.badge-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.6); display: inline-block; margin: 0 2px; }
+.badge-lang { background: transparent; color: var(--teal); border: 1px solid var(--teal); cursor: pointer; margin-left: auto; transition: all 0.15s; }
+.badge-lang:hover { background: var(--teal); color: white; }
+.badge-lang.active { background: var(--teal); color: white; }
+h1 { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+.intro-body { font-size: 14px; color: var(--ink-mid); line-height: 1.7; font-weight: 400; margin-bottom: 1.25rem; }
+.note { font-size: 12px; color: var(--ink-light); background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1.75rem; line-height: 1.6; font-weight: 400; }
+.start-btn { width: 100%; padding: 14px; background: var(--teal); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; letter-spacing: 0.02em; transition: background 0.15s; }
+.start-btn:hover { background: var(--teal-mid); }
+.progress-bar { height: 3px; background: var(--cream-dark); border-radius: 2px; margin-bottom: 1.75rem; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.3s ease; }
+.q-counter { font-size: 11px; color: var(--ink-light); font-weight: 500; margin-bottom: 0.4rem; letter-spacing: 0.03em; }
+.q-dim-label { font-size: 11px; font-weight: 600; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+.q-text { font-size: 17px; font-weight: 500; color: var(--ink); line-height: 1.45; margin-bottom: 1.75rem; letter-spacing: -0.01em; }
+.options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.75rem; }
+.option-btn { width: 100%; padding: 13px 16px; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 400; color: var(--ink-mid); cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; transition: all 0.15s; }
+.option-btn:hover { border-color: var(--teal-mid); background: var(--teal-light); color: var(--teal); }
+.option-btn.selected { border-color: var(--teal); background: var(--teal-light); color: var(--teal); font-weight: 500; }
+.option-num { width: 26px; height: 26px; border-radius: 50%; background: var(--cream); border: 1px solid var(--cream-dark); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; transition: all 0.15s; }
+.option-btn.selected .option-num { background: var(--teal); border-color: var(--teal); color: white; }
+.nav-row { display: flex; gap: 10px; }
+.back-btn { padding: 12px 18px; background: transparent; border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: background 0.15s; }
+.back-btn:hover { background: var(--white); }
+.next-btn { flex: 1; padding: 12px; background: var(--teal); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; opacity: 0.35; pointer-events: none; letter-spacing: 0.02em; transition: opacity 0.15s, background 0.15s; }
+.next-btn.enabled { opacity: 1; pointer-events: auto; }
+.next-btn.enabled:hover { background: var(--teal-mid); }
+.result-header { margin-bottom: 1.5rem; }
+.result-score-row { display: flex; align-items: flex-end; gap: 4px; margin-bottom: 0.25rem; }
+.result-score-num { font-size: 56px; font-weight: 600; line-height: 1; color: var(--teal); letter-spacing: -0.02em; }
+.result-score-max { font-size: 22px; color: var(--ink-light); font-weight: 300; margin-bottom: 6px; }
+.result-label { font-size: 11px; color: var(--ink-light); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.result-interp { font-size: 14px; font-weight: 500; line-height: 1.5; }
+.result-interp.good { color: var(--teal); }
+.result-interp.mid { color: var(--amber); }
+.result-interp.low { color: var(--red); }
+.chart-wrap { background: var(--white); border-radius: var(--radius-lg); padding: 1.5rem 1rem; margin-bottom: 1.25rem; border: 1px solid var(--cream-dark); display: flex; justify-content: center; }
+.dim-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+.dim-pill { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; }
+.dim-pill-label { font-size: 9px; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; margin-bottom: 4px; }
+.dim-pill-score { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.dim-pill-score.good { color: var(--teal); }
+.dim-pill-score.mid { color: var(--amber); }
+.dim-pill-score.low { color: var(--red); }
+.lever-block { border-radius: var(--radius); padding: 1.25rem; margin-bottom: 10px; }
+.lever-block.primary { background: var(--teal-pale); border: 1px solid var(--teal-mid-tone); }
+.lever-block.secondary { background: var(--white); border: 1px solid var(--cream-dark); }
+.lever-eyebrow { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal); margin-bottom: 6px; }
+.lever-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; line-height: 1.4; }
+.lever-text { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 400; }
+.teal-link { color: var(--teal); text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
+.retake-note { font-size: 12px; color: var(--ink-light); line-height: 1.6; margin-bottom: 1.25rem; margin-top: 1rem; padding: 10px 14px; background: var(--white); border-radius: var(--radius-sm); border: 1px solid var(--cream-dark); font-weight: 400; }
+.reset-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: background 0.15s; }
+.reset-btn:hover { background: var(--white); }
+.disclaimer { font-size: 10px; color: var(--ink-light); text-align: center; margin-top: 2rem; line-height: 1.7; font-weight: 400; }
+.footer { text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--cream-dark); }
+.footer a { font-size: 12px; font-weight: 500; color: var(--teal); text-decoration: none; letter-spacing: 0.02em; }
+.footer a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.disclaimer a { color: var(--teal); text-underline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <div class="header-title">Swiss Army Mum</div>
+    <div class="header-tagline">Not every tool. Just the right ones.</div>
+  </div>
+  <div class="header-logo">
+    <img src="https://app.swissarmymum.com/icons/logo-stamp.png" alt="SAM logo" id="logo-img"
+      onerror="document.getElementById('logo-img').style.display='none';document.getElementById('logo-svg').style.display='block'">
+    <svg id="logo-svg" style="display:none" viewBox="0 0 40 40" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#2C5F5D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M20 10 L20 20 L26 23"/>
+        <circle cx="20" cy="20" r="8"/>
+        <path d="M14 7 L20 10 L26 7"/>
+        <path d="M14 33 L20 30 L26 33"/>
+        <path d="M7 14 L10 20 L7 26"/>
+        <path d="M33 14 L30 20 L33 26"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="page">
+
+<div id="screen-intro" class="screen active">
+  <div class="badges">
+    <span class="badge badge-pillar">Body<span class="badge-dot"></span>Fuel</span>
+    <span class="badge badge-type" id="badge-type-intro"></span>
+    <button class="badge badge-lang" id="lang-toggle-intro" onclick="toggleLang()"></button>
+  </div>
+  <h1 id="intro-h1"></h1>
+  <p class="intro-body" id="intro-body"></p>
+  <div class="note" id="intro-note"></div>
+  <button class="start-btn" id="start-btn" onclick="startAssessment()"></button>
+  <div class="footer">
+    <a href="https://www.swissarmymum.com" target="_blank">swissarmymum.com</a>
+  </div>
+</div>
+
+<div id="screen-question" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="q-counter" id="qCounter"></div>
+  <div class="q-dim-label" id="qDim"></div>
+  <div class="q-text" id="qText"></div>
+  <div class="options" id="options"></div>
+  <div class="nav-row">
+    <button class="back-btn" id="back-btn" onclick="goBack()"></button>
+    <button class="next-btn" id="nextBtn" onclick="goNext()"></button>
+  </div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="badges">
+    <span class="badge badge-pillar">Body<span class="badge-dot"></span>Fuel</span>
+    <span class="badge badge-type" id="badge-type-result"></span>
+  </div>
+  <div class="result-header">
+    <div class="result-label" id="score-label"></div>
+    <div class="result-score-row">
+      <div class="result-score-num" id="scoreNum"></div>
+      <div class="result-score-max">/28</div>
+    </div>
+    <div class="result-interp" id="scoreInterp"></div>
+  </div>
+  <div class="chart-wrap"><canvas id="radarChart" width="300" height="300"></canvas></div>
+  <div class="dim-grid" id="dimGrid"></div>
+  <div id="levers"></div>
+  <div class="retake-note" id="retakeNote"></div>
+  <button class="reset-btn" id="reset-btn" onclick="resetAll()"></button>
+  <p class="disclaimer" id="disclaimer"></p>
+  <div class="footer">
+    <a href="https://www.swissarmymum.com" target="_blank">swissarmymum.com</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+// 7 questions, grouped into 4 dimensions. Question option index (0-4) is inverted to a
+// health value (4 - index) so "Never" (index 0) scores 4 (best) and "Always" (index 4) scores 0 (worst).
+const dimGroups = [
+  { key: 'glucose', questionIdx: [0, 1], max: 8 },
+  { key: 'cravings', questionIdx: [2, 3], max: 8 },
+  { key: 'energy', questionIdx: [4, 5], max: 8 },
+  { key: 'weight', questionIdx: [6], max: 4 }
+];
+const TOTAL_MAX = 28;
+
+const strings = {
+  en: {
+    badgeType: 'Self-assessment',
+    langToggle: 'ES',
+    introH1: 'How metabolically healthy are you?',
+    introBody: 'Seven questions. About a minute. A clear picture of your metabolic health right now, across glucose stability, cravings, energy, and weight regulation, the patterns that show up long before a lab test catches anything.',
+    introNote: 'No data is stored. Your answers stay in your browser and disappear when you close the tab. Screenshot your result if you want to track it over time.',
+    startBtn: 'Start the assessment',
+    backBtn: 'Back',
+    nextBtn: 'Next',
+    seeResult: 'See my result',
+    scoreLabel: 'Metabolic stability score',
+    interpGood: 'Your glucose curve is holding steady. Fine-tune the weakest dimension below.',
+    interpMid: 'Your glucose is likely spiking and crashing more than you’d like. One focused change will flatten the curve.',
+    interpLow: 'Your glucose is very likely spiking and crashing through the day. Start with the 80/20 lever below.',
+    goDeeper: 'Go deeper',
+    goDeeperTitle: 'Read the full Fuel breakdown',
+    goDeeperText: 'The SAM Fuel post covers why glucose is the master metric, what actually drives spikes and crashes, and the five principles that flatten the curve.',
+    goDeeperLink: 'Stabilize Blood Sugar: The Fuel 80/20 →',
+    lever80: 'Your 80/20 lever',
+    retakeBtn: 'Retake the assessment',
+    retakeNote: (date, total) => `<strong>Score on ${date}: ${total}/28.</strong> Note this somewhere. Come back after 7 days of applying the lever above and retake to see if the needle moved.`,
+    disclaimer: `Adapted from the Swiss Army Mum Fuel framework, informed by research on postprandial glucose response, insulin resistance, and metabolic dysfunction.<br><br>
+This is educational, not personal medical advice. Your biology, history, and context matter. Work with a qualified healthcare professional.`,
+    dimLabels: { glucose: 'Glucose Stability', cravings: 'Cravings & Hunger', energy: 'Energy & Alertness', weight: 'Weight Regulation' },
+    dimShort: { glucose: 'Glucose', cravings: 'Cravings', energy: 'Energy', weight: 'Weight' },
+    questions: [
+      { dim: 'glucose', text: 'Do you crash, feel shaky, or get irritable two to three hours after meals?' },
+      { dim: 'glucose', text: 'Do you struggle with brain fog, especially in the afternoon?' },
+      { dim: 'cravings', text: 'Do you crave sugar or feel like you need a snack between meals?' },
+      { dim: 'cravings', text: 'Do you wake up hungry, or feel “hangry” if a meal is delayed?' },
+      { dim: 'energy', text: 'Do you rely on caffeine to get through the afternoon?' },
+      { dim: 'energy', text: 'Are you tired despite getting enough sleep?' },
+      { dim: 'weight', text: 'Do you struggle to lose weight despite “eating healthy”?' }
+    ],
+    optionLabels: ['Never', 'Rarely', 'Sometimes', 'Usually', 'Always'],
+    qOf: (n) => `${n} of 7`,
+    levers: {
+      glucose: { title: 'Cut the added sugar and refined carbs first', text: 'Post-meal crashes and afternoon brain fog are the signature of a glucose spike followed by an insulin overshoot. The fastest fix is cutting added sugars, refined grains, and seed oils, soda, pastries, white bread, sweetened coffee, granola bars, and replacing them with whole foods. That blunts the spike at the source. Try it for a week and watch the crashes shrink.' },
+      cravings: { title: 'Add protein and fat to every meal', text: 'Sugar cravings and waking up hungry are hunger hormones, not a willpower problem. Protein and fat slow digestion, blunt the glucose spike from carbs, and keep you satiated for hours. Aim for a source of protein, eggs, fish, Greek yogurt, legumes, poultry, at every meal, plus a source of healthy fat: olive oil, avocado, nuts. That alone quiets most cravings.' },
+      energy: { title: 'Space your meals and close the kitchen at night', text: 'Reaching for caffeine every afternoon and waking up tired despite enough sleep both point to a system that never gets to rest. Eat at regular intervals, three to four hours apart, and stop eating two to three hours before bed. This gives you a natural 12-14 hour overnight fast without any aggressive restriction, and it’s the easiest habit to automate: pick a kitchen closing time and stick to it.' },
+      weight: { title: 'Check what “eating healthy” actually means', text: 'Stuck weight despite eating healthy is usually a sign that the “healthy” foods in your kitchen are ultra-processed in disguise: protein bars, flavored yogurt, granola, fruit juice. Shop the perimeter of the store, produce, meat, dairy, eggs. Eat the ingredient, not the food with a list of ingredients. That shift alone, without cutting calories, moves the needle.' }
+    }
+  },
+  es: {
+    badgeType: 'Autoevaluación',
+    langToggle: 'EN',
+    introH1: '¿Cómo está tu salud metabólica?',
+    introBody: 'Siete preguntas. Un minuto. Una imagen clara de tu salud metabólica ahora mismo: tu estabilidad glucémica, tus antojos, tu energía y tu regulación de peso, los patrones que aparecen mucho antes de que un análisis los detecte.',
+    introNote: 'No se guarda ningún dato. Tus respuestas se quedan en tu navegador y desaparecen al cerrar la pestaña. Haz una captura si quieres llevar un seguimiento.',
+    startBtn: 'Empezar la evaluación',
+    backBtn: 'Volver',
+    nextBtn: 'Siguiente',
+    seeResult: 'Ver mi resultado',
+    scoreLabel: 'Tu puntuación de estabilidad metabólica',
+    interpGood: 'Tu curva de glucosa se mantiene estable. Afina la dimensión más baja para seguir mejorando.',
+    interpMid: 'Es probable que tu glucosa suba y baje más de lo que te gustaría. Un cambio concreto puede aplanar la curva.',
+    interpLow: 'Es muy probable que tu glucosa esté subiendo y bajando durante todo el día. Empieza por la palanca de abajo.',
+    goDeeper: 'Para ir más lejos',
+    goDeeperTitle: 'Lee el artículo completo sobre el Combustible',
+    goDeeperText: 'El artículo SAM sobre el Combustible explica por qué la glucosa es la métrica clave, qué provoca realmente los picos y bajones, y los cinco principios que aplanan la curva.',
+    goDeeperLink: 'Estabiliza tu azúcar en sangre: el 80/20 del Combustible →',
+    lever80: 'Tu palanca de Pareto',
+    retakeBtn: 'Repetir la evaluación',
+    retakeNote: (date, total) => `<strong>Puntuación del ${date}: ${total}/28.</strong> Anótalo en algún sitio. Vuelve a hacer la evaluación tras 7 días aplicando la palanca de abajo y comprueba si la aguja se ha movido.`,
+    disclaimer: `Adaptado del marco del Combustible de Swiss Army Mum, basado en investigación sobre la respuesta glucémica posprandial, la resistencia a la insulina y la disfunción metabólica.<br><br>
+Esta herramienta es educativa y no sustituye el consejo médico personalizado. Tu biología, historial y contexto son únicos. Consulta con un profesional de la salud.`,
+    dimLabels: { glucose: 'Estabilidad Glucémica', cravings: 'Antojos y Hambre', energy: 'Energía y Alerta', weight: 'Regulación de Peso' },
+    dimShort: { glucose: 'Glucosa', cravings: 'Antojos', energy: 'Energía', weight: 'Peso' },
+    questions: [
+      { dim: 'glucose', text: '¿Te da un bajón, te sientes temblorosa o irritable dos o tres horas después de comer?' },
+      { dim: 'glucose', text: '¿Tienes niebla mental, sobre todo por la tarde?' },
+      { dim: 'cravings', text: '¿Se te antoja el azúcar o sientes que necesitas picar algo entre comidas?' },
+      { dim: 'cravings', text: '¿Te despiertas con hambre, o te pones de mal humor si se retrasa una comida?' },
+      { dim: 'energy', text: '¿Dependes de la cafeína para aguantar la tarde?' },
+      { dim: 'energy', text: '¿Estás cansada a pesar de dormir lo suficiente?' },
+      { dim: 'weight', text: '¿Te cuesta perder peso a pesar de “comer sano”?' }
+    ],
+    optionLabels: ['Nunca', 'Casi nunca', 'A veces', 'Casi siempre', 'Siempre'],
+    qOf: (n) => `Pregunta ${n} de 7`,
+    levers: {
+      glucose: { title: 'Corta primero el azúcar añadido y los carbohidratos refinados', text: 'Los bajones después de comer y la niebla mental por la tarde son la firma de un pico de glucosa seguido de una sobrecorrección de insulina. La forma más rápida de arreglarlo es cortar el azúcar añadido, los cereales refinados y los aceites de semillas, refrescos, bolllería, pan blanco, café con azúcar, barritas de cereales, y sustituirlos por alimentos reales. Así frenas el pico desde el origen. Pruébalo una semana y verás cómo se reducen los bajones.' },
+      cravings: { title: 'Añade proteína y grasa a cada comida', text: 'Los antojos de azúcar y despertarte con hambre son hormonas del hambre, no falta de voluntad. La proteína y la grasa ralentizan la digestión, frenan el pico de glucosa de los carbohidratos y te mantienen saciada durante horas. Busca una fuente de proteína, huevos, pescado, yogur griego, legumbres, aves, en cada comida, más una fuente de grasa saludable: aceite de oliva, aguacate, frutos secos. Eso solo ya calma la mayoría de los antojos.' },
+      energy: { title: 'Espacia tus comidas y cierra la cocina por la noche', text: 'Recurrir a la cafeína cada tarde y despertarte cansada a pesar de dormir lo suficiente apuntan a un sistema que nunca descansa. Come a intervalos regulares, cada tres o cuatro horas, y deja de comer dos o tres horas antes de acostarte. Esto te da un ayuno nocturno natural de doce a catorce horas sin ninguna restricción agresiva, y es el hábito más fácil de automatizar: elige una hora para cerrar la cocina y cúmplela.' },
+      weight: { title: 'Revisa qué significa realmente “comer sano”', text: 'Un peso estancado a pesar de “comer sano” suele ser señal de que los alimentos “saludables” de tu cocina son ultraprocesados disfrazados: barritas de proteína, yogur con sabores, granola, zumo de fruta. Compra en el perímetro del supermercado: frutas y verduras, carne, lácteos, huevos. Come el ingrediente, no el producto con una lista de ingredientes. Ese cambio, sin recortar calorías, mueve la aguja.' }
+    }
+  }
+};
+
+const postUrl = 'https://www.swissarmymum.com/p/stabilize-blood-sugar-metabolic-health';
+let lang = 'en';
+let answers = new Array(7).fill(null);
+let current = 0;
+
+function t() { return strings[lang]; }
+
+function toggleLang() {
+  lang = lang === 'en' ? 'es' : 'en';
+  renderUI();
+}
+
+function renderUI() {
+  const s = t();
+  ['badge-type-intro','badge-type-result'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = s.badgeType; });
+  ['lang-toggle-intro'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = s.langToggle; });
+  const h1 = document.getElementById('intro-h1'); if(h1) h1.textContent = s.introH1;
+  const body = document.getElementById('intro-body'); if(body) body.textContent = s.introBody;
+  const note = document.getElementById('intro-note'); if(note) note.textContent = s.introNote;
+  const startBtn = document.getElementById('start-btn'); if(startBtn) startBtn.textContent = s.startBtn;
+  const backBtn = document.getElementById('back-btn'); if(backBtn) backBtn.textContent = s.backBtn;
+  const resetBtn = document.getElementById('reset-btn'); if(resetBtn) resetBtn.textContent = s.retakeBtn;
+  const disclaimer = document.getElementById('disclaimer'); if(disclaimer) disclaimer.innerHTML = s.disclaimer;
+  const screenQ = document.getElementById('screen-question');
+  if (screenQ && screenQ.classList.contains('active')) renderQuestion();
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startAssessment() {
+  answers = new Array(7).fill(null);
+  current = 0;
+  renderQuestion();
+  show('screen-question');
+}
+
+function renderQuestion() {
+  const s = t();
+  const q = s.questions[current];
+  document.getElementById('progressFill').style.width = ((current / 7) * 100) + '%';
+  document.getElementById('qCounter').textContent = s.qOf(current + 1);
+  document.getElementById('qDim').textContent = s.dimLabels[q.dim];
+  document.getElementById('qText').textContent = q.text;
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  s.optionLabels.forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn' + (answers[current] === i ? ' selected' : '');
+    btn.innerHTML = `<span class="option-num">${i}</span>${label}`;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = current === 6 ? s.seeResult : s.nextBtn;
+  nextBtn.classList.toggle('enabled', answers[current] !== null);
+  document.getElementById('back-btn').textContent = s.backBtn;
+}
+
+function selectAnswer(v) {
+  answers[current] = v;
+  document.querySelectorAll('.option-btn').forEach((btn, i) => btn.classList.toggle('selected', i === v));
+  document.getElementById('nextBtn').classList.add('enabled');
+}
+
+function goNext() {
+  if (answers[current] === null) return;
+  if (current < 6) { current++; renderQuestion(); }
+  else showResult();
+}
+
+function goBack() {
+  if (current > 0) { current--; renderQuestion(); }
+  else show('screen-intro');
+}
+
+// answers[] stores the clicked option index (0=Never ... 4=Always).
+// Health value inverts it: Never (0) -> 4 (best), Always (4) -> 0 (worst).
+function healthValue(i) { return 4 - answers[i]; }
+
+function dimensionScore(group) {
+  return group.questionIdx.reduce((sum, qi) => sum + healthValue(qi), 0);
+}
+
+function getScoreClass(score, max) {
+  const frac = score / max;
+  if (frac >= 0.75) return 'good';
+  if (frac >= 0.5) return 'mid';
+  return 'low';
+}
+
+function showResult() {
+  const s = t();
+  const total = dimGroups.reduce((sum, g) => sum + dimensionScore(g), 0);
+  document.getElementById('scoreNum').textContent = total;
+  document.getElementById('score-label').textContent = s.scoreLabel;
+
+  const interpEl = document.getElementById('scoreInterp');
+  const totalFrac = total / TOTAL_MAX;
+  if (totalFrac >= 0.75) { interpEl.textContent = s.interpGood; interpEl.className = 'result-interp good'; }
+  else if (totalFrac >= 0.5) { interpEl.textContent = s.interpMid; interpEl.className = 'result-interp mid'; }
+  else { interpEl.textContent = s.interpLow; interpEl.className = 'result-interp low'; }
+
+  drawRadar();
+
+  document.getElementById('dimGrid').innerHTML = dimGroups.map(g => {
+    const score = dimensionScore(g);
+    return `
+    <div class="dim-pill">
+      <div class="dim-pill-label">${s.dimLabels[g.key]}</div>
+      <div class="dim-pill-score ${getScoreClass(score, g.max)}">${score}/${g.max}</div>
+    </div>
+  `;
+  }).join('');
+
+  let lowestKey = dimGroups[0].key, lowestFrac = 1;
+  dimGroups.forEach(g => {
+    const frac = dimensionScore(g) / g.max;
+    if (frac < lowestFrac) { lowestFrac = frac; lowestKey = g.key; }
+  });
+  const lever = s.levers[lowestKey];
+
+  document.getElementById('levers').innerHTML = `
+    <div class="lever-block primary">
+      <div class="lever-eyebrow">${s.lever80}</div>
+      <div class="lever-title">${lever.title}</div>
+      <div class="lever-text">${lever.text}</div>
+    </div>
+    <div class="lever-block secondary">
+      <div class="lever-eyebrow">${s.goDeeper}</div>
+      <div class="lever-title">${s.goDeeperTitle}</div>
+      <div class="lever-text">${s.goDeeperText} <a href="${postUrl}" class="teal-link" target="_blank">${s.goDeeperLink}</a></div>
+    </div>
+  `;
+
+  const today = new Date().toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('retakeNote').innerHTML = s.retakeNote(today, total);
+  document.getElementById('reset-btn').textContent = s.retakeBtn;
+  document.getElementById('disclaimer').innerHTML = s.disclaimer;
+
+  document.getElementById('progressFill').style.width = '100%';
+  show('screen-result');
+}
+
+function drawRadar() {
+  const s = t();
+  const canvas = document.getElementById('radarChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2, R = 88, n = dimGroups.length;
+  const dimLabels = dimGroups.map(g => s.dimShort[g.key]);
+  const fracs = dimGroups.map(g => dimensionScore(g) / g.max);
+  const angleOffset = -Math.PI / 2;
+  const angles = Array.from({ length: n }, (_, i) => angleOffset + (2 * Math.PI * i) / n);
+
+  ctx.clearRect(0, 0, W, H);
+
+  for (let ring = 1; ring <= 4; ring++) {
+    const r = (R * ring) / 4;
+    ctx.beginPath();
+    angles.forEach((a, i) => { const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+    ctx.closePath(); ctx.strokeStyle = '#EDE8E0'; ctx.lineWidth = 1; ctx.stroke();
+  }
+
+  angles.forEach(a => {
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+    ctx.strokeStyle = '#EDE8E0'; ctx.lineWidth = 1; ctx.stroke();
+  });
+
+  ctx.beginPath();
+  angles.forEach((a, i) => { const val = fracs[i]; const x = cx + R * val * Math.cos(a), y = cy + R * val * Math.sin(a); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+  ctx.closePath(); ctx.fillStyle = 'rgba(44,95,93,0.12)'; ctx.fill(); ctx.strokeStyle = '#2C5F5D'; ctx.lineWidth = 2; ctx.stroke();
+
+  angles.forEach((a, i) => {
+    const val = fracs[i]; const x = cx + R * val * Math.cos(a), y = cy + R * val * Math.sin(a);
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, 2 * Math.PI); ctx.fillStyle = '#2C5F5D'; ctx.fill();
+  });
+
+  ctx.font = '500 10px Montserrat, sans-serif'; ctx.fillStyle = '#4A4A45'; ctx.textBaseline = 'middle';
+  const labelR = R + 18;
+  angles.forEach((a, i) => {
+    const cos = Math.cos(a);
+    ctx.textAlign = cos > 0.15 ? 'left' : (cos < -0.15 ? 'right' : 'center');
+    const lx = cx + labelR * cos, ly = cy + labelR * Math.sin(a);
+    ctx.fillText(dimLabels[i], lx, ly);
+  });
+}
+
+function resetAll() { answers = new Array(7).fill(null); current = 0; show('screen-intro'); }
+
+renderUI();
+</script>
+</body>
+</html>
