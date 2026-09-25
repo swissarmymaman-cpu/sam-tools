@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM Prioritization Tool</title>
+<link rel="icon" type="image/png" href="https://app.swissarmymum.com/icons/logo-stamp.png">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal: #2C5F5D;
+  --teal-mid: #3D7A78;
+  --teal-light: #E8F2F1;
+  --teal-mid-tone: #9FE1CB;
+  --teal-pale: #E1F5EE;
+  --cream: #F7F4EF;
+  --cream-dark: #EDE8E0;
+  --ink: #1A1A18;
+  --ink-mid: #4A4A45;
+  --ink-light: #8A8A82;
+  --amber: #BA7517;
+  --red: #A32D2D;
+  --white: #ffffff;
+  --flow: #F6A04D;
+  --flow-dark: #9A5C00;
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+.app-header { background: var(--teal); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
+.header-left { display: flex; flex-direction: column; gap: 1px; }
+.header-title { font-size: 13px; font-weight: 600; color: white; letter-spacing: 0.02em; line-height: 1.2; }
+.header-tagline { font-size: 9.5px; font-weight: 300; color: rgba(255,255,255,0.65); letter-spacing: 0.04em; line-height: 1.2; }
+.header-logo { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.header-logo img { width: 34px; height: 34px; object-fit: contain; }
+.page { max-width: 520px; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; }
+.screen { display: none; }
+.screen.active { display: block; }
+.badges { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+.badges-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; letter-spacing: 0.03em; }
+.badge-pillar { background: var(--teal); color: white; }
+.badge-pillar-flow { background: var(--flow); color: white; }
+.badge-pillar-flow .badge-dot { background: rgba(255,255,255,0.65); }
+.badge-type { background: var(--teal-light); color: var(--teal); border: 1px solid rgba(44,95,93,0.2); }
+.badge-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.6); display: inline-block; margin: 0 2px; }
+.badge-lang { background: transparent; color: var(--teal); border: 1px solid var(--teal); cursor: pointer; margin-left: auto; transition: all 0.15s; }
+.badge-lang:hover { background: var(--teal); color: white; }
+.badge-lang.active { background: var(--teal); color: white; }
+h1 { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+h2 { font-size: 17px; font-weight: 600; color: var(--ink); line-height: 1.35; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+.intro-body { font-size: 14px; color: var(--ink-mid); line-height: 1.7; font-weight: 400; margin-bottom: 1.5rem; }
+.note { font-size: 12px; color: var(--ink-light); background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1.75rem; line-height: 1.6; font-weight: 400; }
+.start-btn { width: 100%; padding: 14px; background: var(--teal); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; letter-spacing: 0.02em; transition: background 0.15s; }
+.start-btn:hover { background: var(--teal-mid); }
+.start-btn:disabled { opacity: 0.35; pointer-events: none; }
+.progress-bar { height: 3px; background: var(--cream-dark); border-radius: 2px; margin-bottom: 1.75rem; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.3s ease; }
+.q-counter { font-size: 11px; color: var(--ink-light); font-weight: 500; margin-bottom: 0.4rem; letter-spacing: 0.03em; }
+.q-dim-label { font-size: 11px; font-weight: 600; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+.q-text { font-size: 17px; font-weight: 500; color: var(--ink); line-height: 1.45; margin-bottom: 1.75rem; letter-spacing: -0.01em; }
+.options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.75rem; }
+.option-btn { width: 100%; padding: 13px 16px; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 400; color: var(--ink-mid); cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; transition: all 0.15s; }
+.option-btn:hover { border-color: var(--teal-mid); background: var(--teal-light); color: var(--teal); }
+.option-btn.selected { border-color: var(--teal); background: var(--teal-light); color: var(--teal); font-weight: 500; }
+.option-num { width: 26px; height: 26px; border-radius: 50%; background: var(--cream); border: 1px solid var(--cream-dark); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; transition: all 0.15s; }
+.option-btn.selected .option-num { background: var(--teal); border-color: var(--teal); color: white; }
+.compare-btn { padding: 20px 18px; font-size: 15px; font-weight: 500; text-align: center; justify-content: center; min-height: 64px; }
+.compare-vs { text-align: center; font-size: 10px; font-weight: 600; color: var(--ink-light); letter-spacing: 0.1em; margin: 2px 0; }
+.nav-row { display: flex; gap: 10px; }
+.back-btn { padding: 12px 18px; background: transparent; border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: background 0.15s; }
+.back-btn:hover { background: var(--white); }
+.next-btn { flex: 1; padding: 12px; background: var(--teal); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; opacity: 0.35; pointer-events: none; letter-spacing: 0.02em; transition: opacity 0.15s, background 0.15s; }
+.next-btn.enabled { opacity: 1; pointer-events: auto; }
+.next-btn.enabled:hover { background: var(--teal-mid); }
+.steps-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 1.5rem; }
+.step-row { display: flex; gap: 12px; align-items: flex-start; }
+.step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--teal); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px; }
+.step-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.step-text { font-size: 13px; color: var(--ink-mid); line-height: 1.6; font-weight: 400; }
+.item-input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+.item-input { flex: 1; padding: 13px 14px; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; color: var(--ink); }
+.item-input:focus { outline: none; border-color: var(--teal-mid); }
+.add-btn { padding: 13px 18px; background: var(--teal); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+.add-btn:hover { background: var(--teal-mid); }
+.add-btn:disabled { opacity: 0.35; pointer-events: none; }
+.item-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+.item-chip { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); font-size: 13px; color: var(--ink); }
+.item-chip-remove { background: none; border: none; color: var(--ink-light); font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1; transition: color 0.15s; }
+.item-chip-remove:hover { color: var(--red); }
+.item-meta { font-size: 12px; color: var(--ink-light); margin-bottom: 1.5rem; line-height: 1.6; }
+.result-header { margin-bottom: 1.5rem; }
+.result-label { font-size: 11px; color: var(--ink-light); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.winner-name { font-size: 28px; font-weight: 600; line-height: 1.2; color: var(--teal); letter-spacing: -0.01em; margin-bottom: 0.4rem; }
+.result-interp { font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--ink-mid); }
+.rank-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+.rank-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); }
+.rank-row.first { background: var(--teal-pale); border-color: var(--teal-mid-tone); }
+.rank-badge { width: 26px; height: 26px; border-radius: 50%; background: var(--cream); border: 1px solid var(--cream-dark); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--ink-mid); flex-shrink: 0; }
+.rank-row.first .rank-badge { background: var(--teal); border-color: var(--teal); color: white; }
+.rank-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--ink); }
+.rank-score { font-size: 11px; color: var(--ink-light); font-weight: 500; flex-shrink: 0; }
+.tie-note { font-size: 12px; color: var(--ink-light); line-height: 1.6; margin-bottom: 1.25rem; font-style: italic; }
+.lever-block { border-radius: var(--radius); padding: 1.25rem; margin-bottom: 10px; }
+.lever-block.primary { background: var(--teal-pale); border: 1px solid var(--teal-mid-tone); }
+.lever-block.secondary { background: var(--white); border: 1px solid var(--cream-dark); }
+.lever-eyebrow { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal); margin-bottom: 6px; }
+.lever-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; line-height: 1.4; }
+.lever-text { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 400; }
+.teal-link { color: var(--teal); text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
+.retake-note { font-size: 12px; color: var(--ink-light); line-height: 1.6; margin-bottom: 1.25rem; margin-top: 1rem; padding: 10px 14px; background: var(--white); border-radius: var(--radius-sm); border: 1px solid var(--cream-dark); font-weight: 400; }
+.reset-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: background 0.15s; }
+.reset-btn:hover { background: var(--white); }
+.disclaimer { font-size: 10px; color: var(--ink-light); text-align: center; margin-top: 2rem; line-height: 1.7; font-weight: 400; }
+.footer { text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--cream-dark); }
+.footer a { font-size: 12px; font-weight: 500; color: var(--teal); text-decoration: none; letter-spacing: 0.02em; }
+.footer a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.disclaimer a { color: var(--teal); text-underline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <div class="header-title">Swiss Army Mum</div>
+    <div class="header-tagline">Not every tool. Just the right ones.</div>
+  </div>
+  <div class="header-logo">
+    <img src="https://app.swissarmymum.com/icons/logo-stamp.png" alt="SAM logo" id="logo-img"
+      onerror="document.getElementById('logo-img').style.display='none';document.getElementById('logo-svg').style.display='block'">
+    <svg id="logo-svg" style="display:none" viewBox="0 0 40 40" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#2C5F5D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M20 10 L20 20 L26 23"/>
+        <circle cx="20" cy="20" r="8"/>
+        <path d="M14 7 L20 10 L26 7"/>
+        <path d="M14 33 L20 30 L26 33"/>
+        <path d="M7 14 L10 20 L7 26"/>
+        <path d="M33 14 L30 20 L33 26"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="page">
+
+<div id="screen-intro" class="screen active">
+  <div class="badges">
+    <div class="badges-row">
+      <span class="badge badge-pillar">Mind<span class="badge-dot"></span>Purpose and Philosophy of Life</span>
+      <span class="badge badge-type" id="badge-type-intro"></span>
+      <button class="badge badge-lang" id="lang-toggle-intro" onclick="toggleLang()"></button>
+    </div>
+    <div class="badges-row">
+      <span class="badge badge-pillar-flow">Flow<span class="badge-dot"></span>Systems and Planning</span>
+    </div>
+  </div>
+  <h1 id="intro-h1"></h1>
+  <p class="intro-body" id="intro-body"></p>
+  <div class="steps-list" id="steps-list"></div>
+  <div class="note" id="intro-note"></div>
+  <button class="start-btn" id="start-btn" onclick="goToItems()"></button>
+  <div class="footer">
+    <a href="https://www.swissarmymum.com" target="_blank">swissarmymum.com</a>
+  </div>
+</div>
+
+<div id="screen-items" class="screen">
+  <div class="badges">
+    <div class="badges-row">
+      <span class="badge badge-pillar">Mind<span class="badge-dot"></span>Purpose and Philosophy of Life</span>
+      <span class="badge badge-type" id="badge-type-items"></span>
+    </div>
+    <div class="badges-row">
+      <span class="badge badge-pillar-flow">Flow<span class="badge-dot"></span>Systems and Planning</span>
+    </div>
+  </div>
+  <h2 id="items-h2"></h2>
+  <p class="intro-body" id="items-body" style="margin-bottom:1rem;"></p>
+  <div class="item-input-row">
+    <input type="text" class="item-input" id="item-input" maxlength="100">
+    <button class="add-btn" id="add-btn" onclick="addItemFromInput()"></button>
+  </div>
+  <div class="item-list" id="item-list"></div>
+  <p class="item-meta" id="item-meta"></p>
+  <div class="nav-row">
+    <button class="back-btn" id="items-back-btn" onclick="show('screen-intro')"></button>
+    <button class="next-btn" id="compare-btn" onclick="startCompare()"></button>
+  </div>
+</div>
+
+<div id="screen-compare" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="q-counter" id="qCounter"></div>
+  <div class="q-dim-label" id="qDim"></div>
+  <div class="options" id="compareOptions"></div>
+  <div class="nav-row">
+    <button class="back-btn" id="back-btn" onclick="goBackCompare()"></button>
+    <button class="next-btn" id="nextBtn" onclick="goNextCompare()"></button>
+  </div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="badges">
+    <div class="badges-row">
+      <span class="badge badge-pillar">Mind<span class="badge-dot"></span>Purpose and Philosophy of Life</span>
+      <span class="badge badge-type" id="badge-type-result"></span>
+    </div>
+    <div class="badges-row">
+      <span class="badge badge-pillar-flow">Flow<span class="badge-dot"></span>Systems and Planning</span>
+    </div>
+  </div>
+  <div class="result-header">
+    <div class="result-label" id="score-label"></div>
+    <div class="winner-name" id="winnerName"></div>
+    <div class="result-interp" id="scoreInterp"></div>
+  </div>
+  <div class="rank-list" id="rankList"></div>
+  <p class="tie-note" id="tieNote" style="display:none;"></p>
+  <div id="levers"></div>
+  <div class="retake-note" id="retakeNote"></div>
+  <button class="reset-btn" id="reset-btn" onclick="resetAll()"></button>
+  <p class="disclaimer" id="disclaimer"></p>
+  <div class="footer">
+    <a href="https://www.swissarmymum.com" target="_blank">swissarmymum.com</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+const MIN_ITEMS = 2;
+const MAX_ITEMS = 10;
+
+const strings = {
+  en: {
+    badgeType: 'Reflection',
+    langToggle: 'ES',
+    introH1: 'What should you actually do first?',
+    introBody: 'Too many things competing for your attention, no clear way to rank them. This tool forces the ranking. Add what you’re weighing, compare it pair by pair, and get a clear order based on what actually wins, not what feels loudest today.',
+    steps: [
+      { title: 'Add your list', text: 'Type in everything you’re trying to prioritize. Two to ten items.' },
+      { title: 'Compare, one pair at a time', text: 'You’ll see two items side by side. Pick the one that matters more, right now. No ties, no overthinking.' },
+      { title: 'Get your ranked list', text: 'Once every pair has been compared, you’ll see a clear order, from most to least important, and what to do with it.' }
+    ],
+    introNote: 'No data is stored. Your list and answers stay in your browser and disappear when you close the tab. Screenshot your result if you want to keep it.',
+    startBtn: 'Add your items',
+    itemsH2: 'What are you prioritizing?',
+    itemsBody: 'Add two to ten items. You’ll compare every possible pair, so more items means more comparisons.',
+    addBtn: 'Add',
+    itemPlaceholder: 'Type an item, then press Enter',
+    itemMeta: (n, pairs) => n === 0 ? 'No items yet. Add at least two to start comparing.' : n === 1 ? '1 item added. Add at least one more to start comparing.' : `${n} items added, ${pairs} head-to-head comparisons ahead.`,
+    itemsBackBtn: 'Back',
+    compareBtn: 'Compare items',
+    backBtn: 'Back',
+    nextBtn: 'Next',
+    seeResult: 'See my ranking',
+    compareLabel: 'Which matters more, right now?',
+    qOf: (n, total) => `Comparison ${n} of ${total}`,
+    scoreLabel: 'Your top priority',
+    interp: (n) => `Ranked from ${n} head-to-head comparisons. Highest wins first.`,
+    goDeeper: 'Go deeper',
+    goDeeperTitle: 'Why prioritizing feels so hard',
+    goDeeperText: 'Overwhelm is rarely a time management problem. It’s usually a values clarity problem in disguise, too many open loops and no clear order. The SAM piece on decision fatigue covers why, and the Stoic tools for working through it.',
+    goDeeperLink: 'On Overwhelm and Decision Fatigue →',
+    lever80: 'What to do now',
+    leverTitle: (name) => `Start with "${name}." Nothing else yet.`,
+    leverText: (name) => `Give your full attention to "${name}" before touching anything else on the list. Everything below it can wait exactly as long as it already has. That’s the whole point of ranking: doing the next right thing instead of trying to do everything at once.`,
+    tieNote: 'Two or more items are tied. The order between them just reflects the order you added them in, trust your gut on which comes first.',
+    retakeBtn: 'Compare a new list',
+    retakeNote: (date, n) => `<strong>Ranked on ${date}.</strong> Revisit this whenever the list changes, new commitments always reshuffle the order.`,
+    disclaimer: `Uses paired comparison analysis, also called a priority matrix: a simple way to turn gut instinct into a ranked order by comparing options two at a time instead of trying to rank everything at once.<br><br>
+This ranks your instinct, not your constraints. It doesn’t know your deadlines or context, use it as one input, not the final word.`
+  },
+  es: {
+    badgeType: 'Reflexión',
+    langToggle: 'EN',
+    introH1: '¿Qué deberías hacer primero, en realidad?',
+    introBody: 'Demasiadas cosas compitiendo por tu atención y ninguna forma clara de ordenarlas. Esta herramienta te obliga a ordenar. Añade lo que estás sopesando, compáralo de dos en dos, y obtén un orden claro basado en lo que realmente gana, no en lo que grita más fuerte hoy.',
+    steps: [
+      { title: 'Añade tu lista', text: 'Escribe todo lo que quieres priorizar. Entre dos y diez elementos.' },
+      { title: 'Compara, de dos en dos', text: 'Verás dos elementos uno junto al otro. Elige el que importa más, ahora mismo. Sin empates, sin darle demasiadas vueltas.' },
+      { title: 'Obtén tu lista ordenada', text: 'Cuando hayas comparado cada pareja, verás un orden claro, de más a menos importante, y qué hacer con él.' }
+    ],
+    introNote: 'No se guarda ningún dato. Tu lista y tus respuestas se quedan en tu navegador y desaparecen al cerrar la pestaña. Haz una captura si quieres conservar el resultado.',
+    startBtn: 'Añade tus elementos',
+    itemsH2: '¿Qué estás priorizando?',
+    itemsBody: 'Añade entre dos y diez elementos. Vas a comparar cada pareja posible, así que cuantos más elementos, más comparaciones.',
+    addBtn: 'Añadir',
+    itemPlaceholder: 'Escribe un elemento y pulsa Enter',
+    itemMeta: (n, pairs) => n === 0 ? 'Aún no hay elementos. Añade al menos dos para empezar a comparar.' : n === 1 ? '1 elemento añadido. Añade al menos uno más para empezar.' : `${n} elementos añadidos, ${pairs} comparaciones por delante.`,
+    itemsBackBtn: 'Volver',
+    compareBtn: 'Comparar elementos',
+    backBtn: 'Volver',
+    nextBtn: 'Siguiente',
+    seeResult: 'Ver mi ranking',
+    compareLabel: '¿Qué importa más, ahora mismo?',
+    qOf: (n, total) => `Comparación ${n} de ${total}`,
+    scoreLabel: 'Tu prioridad principal',
+    interp: (n) => `Ordenado a partir de ${n} comparaciones directas. Gana el que más veces ganó.`,
+    goDeeper: 'Para ir más lejos',
+    goDeeperTitle: 'Por qué priorizar cuesta tanto',
+    goDeeperText: 'El agobio casi nunca es un problema de gestión del tiempo. Suele ser un problema de claridad de valores disfrazado: demasiados frentes abiertos y ningún orden claro. El artículo SAM sobre la fatiga de decisión explica por qué, y las herramientas estoicas para trabajarlo.',
+    goDeeperLink: 'Sobre el agobio y la fatiga de decisión →',
+    lever80: 'Qué hacer ahora',
+    leverTitle: (name) => `Empieza por "${name}." Nada más por ahora.`,
+    leverText: (name) => `Dedica toda tu atención a "${name}" antes de tocar cualquier otra cosa de la lista. Todo lo demás puede esperar exactamente lo mismo que ya ha esperado. Ese es el sentido de ordenar: hacer lo siguiente correcto en vez de intentar hacerlo todo a la vez.`,
+    tieNote: 'Dos o más elementos han empatado. El orden entre ellos solo refleja el orden en que los añadiste, fíate de tu instinto para decidir cuál va primero.',
+    retakeBtn: 'Comparar una lista nueva',
+    retakeNote: (date, n) => `<strong>Ordenado el ${date}.</strong> Vuelve a hacerlo cuando la lista cambie, los compromisos nuevos siempre reorganizan el orden.`,
+    disclaimer: `Usa el análisis de comparación por pares, también llamado matriz de prioridades: una forma sencilla de convertir el instinto en un orden claro comparando las opciones de dos en dos en lugar de intentar ordenarlas todas a la vez.<br><br>
+Esto ordena tu instinto, no tus limitaciones. No conoce tus plazos ni tu contexto, úsalo como una entrada más, no como la última palabra.`
+  }
+};
+
+const postUrl = 'https://www.swissarmymum.com/p/on-overwhelm-and-decision-fatigue';
+let lang = 'en';
+let items = [];
+let pairs = [];
+let choices = [];
+let current = 0;
+
+function t() { return strings[lang]; }
+
+function toggleLang() {
+  lang = lang === 'en' ? 'es' : 'en';
+  renderUI();
+}
+
+function renderUI() {
+  const s = t();
+  ['badge-type-intro','badge-type-items','badge-type-result'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = s.badgeType; });
+  const langToggle = document.getElementById('lang-toggle-intro'); if(langToggle) langToggle.textContent = s.langToggle;
+  const h1 = document.getElementById('intro-h1'); if(h1) h1.textContent = s.introH1;
+  const body = document.getElementById('intro-body'); if(body) body.textContent = s.introBody;
+  const stepsList = document.getElementById('steps-list');
+  if (stepsList) {
+    stepsList.innerHTML = s.steps.map((step, i) => `
+      <div class="step-row">
+        <div class="step-num">${i + 1}</div>
+        <div>
+          <div class="step-title">${step.title}</div>
+          <div class="step-text">${step.text}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  const note = document.getElementById('intro-note'); if(note) note.textContent = s.introNote;
+  const startBtn = document.getElementById('start-btn'); if(startBtn) startBtn.textContent = s.startBtn;
+  const itemsH2 = document.getElementById('items-h2'); if(itemsH2) itemsH2.textContent = s.itemsH2;
+  const itemsBody = document.getElementById('items-body'); if(itemsBody) itemsBody.textContent = s.itemsBody;
+  const addBtn = document.getElementById('add-btn'); if(addBtn) addBtn.textContent = s.addBtn;
+  const itemInput = document.getElementById('item-input'); if(itemInput) itemInput.placeholder = s.itemPlaceholder;
+  const itemsBackBtn = document.getElementById('items-back-btn'); if(itemsBackBtn) itemsBackBtn.textContent = s.itemsBackBtn;
+  const compareBtn = document.getElementById('compare-btn'); if(compareBtn) compareBtn.textContent = s.compareBtn;
+  const resetBtn = document.getElementById('reset-btn'); if(resetBtn) resetBtn.textContent = s.retakeBtn;
+  const disclaimer = document.getElementById('disclaimer'); if(disclaimer) disclaimer.innerHTML = s.disclaimer;
+  renderItemList();
+  const screenCompare = document.getElementById('screen-compare');
+  if (screenCompare && screenCompare.classList.contains('active')) renderComparison();
+  const screenResult = document.getElementById('screen-result');
+  if (screenResult && screenResult.classList.contains('active')) renderResult();
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goToItems() {
+  renderItemList();
+  show('screen-items');
+}
+
+function addItemFromInput() {
+  const input = document.getElementById('item-input');
+  const val = input.value.trim();
+  if (!val || items.length >= MAX_ITEMS) return;
+  items.push(val);
+  input.value = '';
+  renderItemList();
+  input.focus();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('item-input');
+  if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addItemFromInput(); } });
+});
+
+function removeItem(idx) {
+  items.splice(idx, 1);
+  renderItemList();
+}
+
+function renderItemList() {
+  const s = t();
+  const list = document.getElementById('item-list');
+  if (!list) return;
+  list.innerHTML = items.map((name, i) => `
+    <div class="item-chip">
+      <span>${escapeHtml(name)}</span>
+      <button class="item-chip-remove" onclick="removeItem(${i})" aria-label="Remove">×</button>
+    </div>
+  `).join('');
+  const n = items.length;
+  const pairCount = n * (n - 1) / 2;
+  const meta = document.getElementById('item-meta');
+  if (meta) meta.textContent = s.itemMeta(n, pairCount);
+  const addBtn = document.getElementById('add-btn');
+  if (addBtn) addBtn.disabled = n >= MAX_ITEMS;
+  const compareBtn = document.getElementById('compare-btn');
+  if (compareBtn) compareBtn.classList.toggle('enabled', n >= MIN_ITEMS);
+  if (compareBtn) { compareBtn.style.opacity = n >= MIN_ITEMS ? '1' : '0.35'; compareBtn.style.pointerEvents = n >= MIN_ITEMS ? 'auto' : 'none'; }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function generatePairs(n) {
+  const p = [];
+  for (let i = 0; i < n - 1; i++) for (let j = i + 1; j < n; j++) p.push([i, j]);
+  return p;
+}
+
+function startCompare() {
+  if (items.length < MIN_ITEMS) return;
+  pairs = generatePairs(items.length);
+  choices = new Array(pairs.length).fill(null);
+  current = 0;
+  renderComparison();
+  show('screen-compare');
+}
+
+function renderComparison() {
+  const s = t();
+  const [ai, bi] = pairs[current];
+  document.getElementById('progressFill').style.width = ((current / pairs.length) * 100) + '%';
+  document.getElementById('qCounter').textContent = s.qOf(current + 1, pairs.length);
+  document.getElementById('qDim').textContent = s.compareLabel;
+
+  const opts = document.getElementById('compareOptions');
+  const chosen = choices[current];
+  opts.innerHTML = `
+    <button class="option-btn compare-btn${chosen === ai ? ' selected' : ''}" onclick="selectChoice(${ai})">${escapeHtml(items[ai])}</button>
+    <div class="compare-vs">${lang === 'es' ? 'FRENTE A' : 'VS'}</div>
+    <button class="option-btn compare-btn${chosen === bi ? ' selected' : ''}" onclick="selectChoice(${bi})">${escapeHtml(items[bi])}</button>
+  `;
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = current === pairs.length - 1 ? s.seeResult : s.nextBtn;
+  nextBtn.classList.toggle('enabled', chosen !== null);
+  document.getElementById('back-btn').textContent = s.backBtn;
+}
+
+function selectChoice(itemIndex) {
+  choices[current] = itemIndex;
+  renderComparison();
+}
+
+function goNextCompare() {
+  if (choices[current] === null || choices[current] === undefined) return;
+  if (current < pairs.length - 1) { current++; renderComparison(); }
+  else showResult();
+}
+
+function goBackCompare() {
+  if (current > 0) { current--; renderComparison(); }
+  else { renderItemList(); show('screen-items'); }
+}
+
+function showResult() {
+  const s = t();
+  const n = items.length;
+  const wins = new Array(n).fill(0);
+  choices.forEach(winnerIdx => { if (winnerIdx !== null && winnerIdx !== undefined) wins[winnerIdx]++; });
+
+  const ranked = items.map((name, idx) => ({ name, idx, wins: wins[idx] }));
+  ranked.sort((a, b) => b.wins - a.wins);
+
+  document.getElementById('score-label').textContent = s.scoreLabel;
+  document.getElementById('winnerName').textContent = ranked[0].name;
+  document.getElementById('scoreInterp').textContent = s.interp(pairs.length);
+
+  document.getElementById('rankList').innerHTML = ranked.map((r, pos) => `
+    <div class="rank-row${pos === 0 ? ' first' : ''}">
+      <div class="rank-badge">${pos + 1}</div>
+      <div class="rank-name">${escapeHtml(r.name)}</div>
+      <div class="rank-score">${r.wins}/${n - 1}</div>
+    </div>
+  `).join('');
+
+  const tieNote = document.getElementById('tieNote');
+  const hasTie = ranked.some((r, i) => i > 0 && r.wins === ranked[i - 1].wins);
+  if (hasTie) { tieNote.style.display = 'block'; tieNote.textContent = s.tieNote; }
+  else { tieNote.style.display = 'none'; }
+
+  document.getElementById('levers').innerHTML = `
+    <div class="lever-block primary">
+      <div class="lever-eyebrow">${s.lever80}</div>
+      <div class="lever-title">${s.leverTitle(ranked[0].name)}</div>
+      <div class="lever-text">${s.leverText(ranked[0].name)}</div>
+    </div>
+    <div class="lever-block secondary">
+      <div class="lever-eyebrow">${s.goDeeper}</div>
+      <div class="lever-title">${s.goDeeperTitle}</div>
+      <div class="lever-text">${s.goDeeperText} <a href="${postUrl}" class="teal-link" target="_blank">${s.goDeeperLink}</a></div>
+    </div>
+  `;
+
+  const today = new Date().toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('retakeNote').innerHTML = s.retakeNote(today, n);
+  document.getElementById('reset-btn').textContent = s.retakeBtn;
+  document.getElementById('disclaimer').innerHTML = s.disclaimer;
+
+  document.getElementById('progressFill').style.width = '100%';
+  show('screen-result');
+}
+
+function renderResult() {
+  if (items.length) showResult();
+}
+
+function resetAll() {
+  items = []; pairs = []; choices = []; current = 0;
+  renderItemList();
+  show('screen-intro');
+}
+
+renderUI();
+</script>
+</body>
+</html>
