@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM Weekly Planner</title>
+<link rel="icon" type="image/png" href="https://app.swissarmymum.com/icons/logo-stamp.png">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal: #315E63;
+  --body-green: #025A5A;
+  --body-green-mid: #013D3D;
+  --body-green-light: #E0F2F1;
+  --mind-red: #E32C2D;
+  --mind-red-mid: #8B1111;
+  --mind-red-light: #FDEAEA;
+  --cream: #F7F4EF;
+  --cream-dark: #EDE8E0;
+  --ink: #1A1A18;
+  --ink-mid: #4A4A45;
+  --ink-light: #8A8A82;
+  --white: #ffffff;
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+.app-header { background: var(--teal); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
+.header-left { display: flex; flex-direction: column; gap: 1px; }
+.header-title { font-size: 13px; font-weight: 600; color: white; letter-spacing: 0.02em; line-height: 1.2; }
+.header-tagline { font-size: 9.5px; font-weight: 300; color: rgba(255,255,255,0.65); letter-spacing: 0.04em; line-height: 1.2; }
+.header-logo { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.header-logo img { width: 34px; height: 34px; object-fit: contain; }
+
+.page { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+.badges-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 1.25rem; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; letter-spacing: 0.03em; }
+.badge-body { background: var(--body-green); color: white; }
+.badge-mind { background: var(--mind-red); color: white; }
+.badge-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.6); display: inline-block; margin: 0 2px; }
+.badge-type { background: var(--cream-dark); color: var(--ink-mid); }
+.badge-lang { background: transparent; color: var(--teal); border: 1px solid var(--teal); cursor: pointer; margin-left: auto; transition: all 0.15s; font-family: 'Montserrat', sans-serif; }
+.badge-lang:hover { background: var(--teal); color: white; }
+
+h1 { font-size: 22px; font-weight: 600; line-height: 1.3; margin-bottom: 0.6rem; letter-spacing: -0.01em; }
+.intro-body { font-size: 14px; color: var(--ink-mid); line-height: 1.7; margin-bottom: 1.25rem; max-width: 70ch; }
+.note { font-size: 12px; color: var(--ink-light); background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1.5rem; line-height: 1.6; max-width: 70ch; }
+
+.tabs { display: flex; margin-bottom: 1.25rem; border-bottom: 1px solid var(--cream-dark); }
+.tab-btn { font-family: 'Montserrat', sans-serif; background: none; border: none; padding: 10px 4px; margin-right: 22px; font-size: 14px; font-weight: 600; color: var(--ink-light); cursor: pointer; border-bottom: 2px solid transparent; }
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+/* Progress summary: numbers only */
+.progress-summary { display: flex; align-items: flex-end; gap: 2.25rem; flex-wrap: wrap; padding: 0.25rem 0 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--cream-dark); }
+.stat { display: flex; flex-direction: column; gap: 6px; min-width: 88px; }
+.stat-num { font-weight: 300; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.stat-num sup { font-size: 0.42em; font-weight: 500; letter-spacing: 0; vertical-align: 0.95em; margin-left: 2px; }
+.stat-overall .stat-num { font-size: 56px; color: var(--ink); }
+.stat-pillar .stat-num { font-size: 34px; }
+.stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-light); }
+.stat-bar { height: 2px; background: var(--cream-dark); border-radius: 1px; overflow: hidden; }
+.stat-bar i { display: block; height: 100%; transition: width 0.35s ease; }
+.pillar-focus { display: flex; flex-direction: column; gap: 6px; margin-left: auto; align-self: center; }
+.pillar-focus-label { font-size: 10px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.06em; }
+.pillar-toggles { display: flex; gap: 8px; }
+.pillar-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--cream-dark); background: var(--white); color: var(--ink-light); font-family: 'Montserrat', sans-serif; }
+.pillar-toggle.on.body { border-color: var(--body-green); background: var(--body-green-light); color: var(--body-green); }
+.pillar-toggle.on.mind { border-color: var(--mind-red); background: var(--mind-red-light); color: var(--mind-red); }
+.pillar-toggle-dot { width: 8px; height: 8px; border-radius: 50%; }
+.pillar-toggle.body .pillar-toggle-dot { background: var(--body-green); }
+.pillar-toggle.mind .pillar-toggle-dot { background: var(--mind-red); }
+
+.layout { display: grid; grid-template-columns: 300px minmax(0,1fr); gap: 1.25rem; align-items: start; }
+@media (max-width: 860px) { .layout { grid-template-columns: minmax(0,1fr); } }
+
+/* Catalog */
+.catalog { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius-lg); padding: 1.1rem; }
+.catalog-pillar-heading { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; margin: 1.1rem 0 0.5rem; }
+.catalog-pillar-heading:first-child { margin-top: 0; }
+.catalog-pillar-dot { width: 9px; height: 9px; border-radius: 50%; }
+.catalog-pillar-dot.body { background: var(--body-green); }
+.catalog-pillar-dot.mind { background: var(--mind-red); }
+.catalog-area-heading { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-light); margin: 0.7rem 0 0.35rem; }
+.catalog-item { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: var(--radius-sm); }
+.catalog-item:hover { background: var(--cream); }
+.catalog-item-main { flex: 1; min-width: 0; }
+.catalog-item-name { font-size: 12.5px; font-weight: 500; line-height: 1.3; }
+.catalog-item-meta { font-size: 10.5px; color: var(--ink-light); margin-top: 1px; }
+.catalog-item-counter { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 10px; flex-shrink: 0; min-width: 36px; text-align: center; transition: background-color 0.3s, color 0.3s; }
+.catalog-item-link { color: var(--ink-light); text-decoration: none; font-size: 13px; flex-shrink: 0; padding: 2px; }
+.catalog-add-btn { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--cream-dark); background: var(--white); color: var(--ink-mid); font-size: 15px; line-height: 1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; font-family: 'Montserrat', sans-serif; }
+.catalog-add-btn:hover { border-color: var(--teal); color: var(--teal); }
+.coming-soon-note { font-size: 11px; color: var(--ink-light); margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid var(--cream-dark); line-height: 1.5; }
+
+/* Calendar actions */
+.calendar-actions { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+.ghost-btn { font-family: 'Montserrat', sans-serif; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 9px 14px; font-size: 12px; font-weight: 600; color: var(--ink-mid); cursor: pointer; }
+.ghost-btn:hover { background: var(--cream); }
+.primary-btn { font-family: 'Montserrat', sans-serif; background: var(--teal); border: none; border-radius: var(--radius); padding: 9px 16px; font-size: 12px; font-weight: 600; color: white; cursor: pointer; }
+.primary-btn:hover { background: #26494d; }
+.view-toggle { display: inline-flex; border: 1px solid var(--cream-dark); border-radius: var(--radius); overflow: hidden; margin-left: auto; background: var(--white); }
+.view-toggle button { font-family: 'Montserrat', sans-serif; border: none; background: none; padding: 9px 14px; font-size: 12px; font-weight: 600; color: var(--ink-light); cursor: pointer; }
+.view-toggle button.active { background: var(--teal); color: white; }
+
+/* List view */
+.week-list { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 8px; }
+@media (max-width: 860px) { .week-list { grid-template-columns: 1fr; } }
+.day-card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 10px; min-height: 120px; }
+.day-card-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: baseline; }
+.day-card-date { font-weight: 400; color: var(--ink-light); font-size: 10px; }
+.day-block { display: flex; align-items: flex-start; gap: 6px; padding: 6px 7px; border-radius: 7px; margin-bottom: 6px; font-size: 11px; line-height: 1.35; }
+.day-block.body { background: var(--body-green-light); color: var(--body-green-mid); }
+.day-block.mind { background: var(--mind-red-light); color: var(--mind-red-mid); }
+.day-block-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.day-block.body .day-block-dot { background: var(--body-green); }
+.day-block.mind .day-block-dot { background: var(--mind-red); }
+.day-block-text { flex: 1; }
+.day-block-time { font-weight: 700; }
+.x-btn { background: none; border: none; color: inherit; opacity: 0.5; cursor: pointer; font-size: 13px; line-height: 1; padding: 0 2px; flex-shrink: 0; font-family: 'Montserrat', sans-serif; }
+.x-btn:hover { opacity: 1; }
+.day-card-empty { font-size: 10.5px; color: var(--ink-light); font-style: italic; padding: 4px 2px; }
+
+/* Calendar (hour grid) view */
+.cal-scroll { overflow-x: auto; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); }
+.cal { display: grid; grid-template-columns: 44px repeat(7, minmax(96px, 1fr)); min-width: 720px; }
+.cal-head { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; text-align: center; padding: 8px 2px; border-bottom: 1px solid var(--cream-dark); background: var(--white); position: sticky; top: 0; z-index: 2; }
+.cal-head span { display: block; font-weight: 400; color: var(--ink-light); font-size: 9.5px; text-transform: none; }
+.cal-hours { position: relative; }
+.cal-hour-label { position: absolute; right: 6px; font-size: 9.5px; color: var(--ink-light); transform: translateY(-50%); }
+.cal-day { position: relative; border-left: 1px solid var(--cream-dark); background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--hour-h) - 1px), var(--cream-dark) calc(var(--hour-h) - 1px), var(--cream-dark) var(--hour-h)); }
+.cal-block { position: absolute; border-radius: 6px; padding: 3px 16px 3px 5px; font-size: 10px; line-height: 1.3; overflow: hidden; border-left: 3px solid; white-space: nowrap; text-overflow: ellipsis; }
+.cal-block.body { background: var(--body-green-light); color: var(--body-green-mid); border-left-color: var(--body-green); }
+.cal-block.mind { background: var(--mind-red-light); color: var(--mind-red-mid); border-left-color: var(--mind-red); }
+.cal-block .x-btn { position: absolute; top: 1px; right: 2px; font-size: 11px; }
+.cal-block-time { font-weight: 700; }
+
+/* Month grid */
+.month-grid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 6px; }
+.month-dow { font-size: 10px; font-weight: 700; color: var(--ink-light); text-transform: uppercase; text-align: center; padding-bottom: 4px; }
+.month-cell { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 8px; min-height: 70px; padding: 6px; }
+.month-cell.empty { background: transparent; border-color: transparent; }
+.month-cell-num { font-size: 10.5px; color: var(--ink-light); font-weight: 600; margin-bottom: 4px; }
+.month-block { display: flex; align-items: center; gap: 4px; font-size: 9.5px; line-height: 1.3; padding: 2px 4px; border-radius: 5px; margin-bottom: 3px; }
+.month-block.body { background: var(--body-green-light); color: var(--body-green-mid); }
+.month-block.mind { background: var(--mind-red-light); color: var(--mind-red-mid); }
+.month-block .x-btn { margin-left: auto; font-size: 11px; }
+
+/* Placer modal */
+.overlay { position: fixed; inset: 0; background: rgba(26,26,24,0.45); display: none; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
+.overlay.active { display: flex; }
+.placer { background: var(--white); border-radius: var(--radius-lg); padding: 1.5rem; max-width: 380px; width: 100%; }
+.placer h3 { font-size: 15px; font-weight: 600; margin-bottom: 0.9rem; }
+.placer-label { font-size: 11px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.4rem; display: flex; justify-content: space-between; align-items: baseline; }
+.placer-hint { font-size: 10.5px; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink-light); }
+.day-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.day-chip { font-family: 'Montserrat', sans-serif; padding: 7px 0; width: 40px; text-align: center; border-radius: 8px; border: 1.5px solid var(--cream-dark); background: var(--white); font-size: 11px; font-weight: 600; cursor: pointer; color: var(--ink-mid); }
+.day-chip.selected { border-color: var(--teal); background: var(--teal); color: white; }
+.chip-shortcuts { display: flex; gap: 10px; margin-top: 6px; }
+.chip-shortcuts button { background: none; border: none; font-family: 'Montserrat', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--teal); cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+.placer-row { display: flex; gap: 10px; margin-top: 0.9rem; }
+.placer-field { flex: 1; }
+.placer-field label { font-size: 10.5px; color: var(--ink-light); display: block; margin-bottom: 3px; }
+.placer-field input { width: 100%; font-family: 'Montserrat', sans-serif; padding: 8px 10px; border: 1px solid var(--cream-dark); border-radius: 8px; font-size: 13px; color: var(--ink); }
+.placer-actions { display: flex; gap: 8px; margin-top: 1.25rem; }
+.placer-actions button { flex: 1; }
+.placer-actions .primary-btn:disabled { opacity: 0.35; cursor: default; }
+
+/* Export + import help */
+.export-block { background: var(--teal); color: white; border-radius: var(--radius-lg); padding: 1.25rem 1.4rem; margin-top: 1.5rem; }
+.export-top { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.export-block-text { flex: 1; min-width: 200px; }
+.export-block-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.export-block-sub { font-size: 12px; color: rgba(255,255,255,0.78); line-height: 1.5; }
+.export-btn { font-family: 'Montserrat', sans-serif; background: white; color: var(--teal); border: none; border-radius: var(--radius); padding: 11px 18px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.export-btn:hover { background: var(--cream); }
+.export-btn:disabled { opacity: 0.5; cursor: default; }
+.howto { margin-top: 1.1rem; padding-top: 0.4rem; border-top: 1px solid rgba(255,255,255,0.18); display: flex; flex-direction: column; }
+.howto-line { display: block; margin-bottom: 3px; }
+.howto-line b { color: white; font-weight: 600; }
+.howto-step { display: grid; grid-template-columns: 190px minmax(0,1fr); gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.howto-step:last-child { border-bottom: none; }
+@media (max-width: 700px) { .howto-step { grid-template-columns: 1fr; gap: 2px; } }
+.howto-step { font-size: 11.5px; line-height: 1.55; color: rgba(255,255,255,0.85); }
+.howto-step strong { display: block; color: white; font-size: 12px; }
+.reimport { margin-top: 1rem; padding: 0.9rem 1rem; background: rgba(255,255,255,0.1); border-radius: var(--radius); display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.reimport-text { flex: 1; min-width: 200px; font-size: 11.5px; line-height: 1.55; color: rgba(255,255,255,0.85); }
+.reimport-btn { font-family: 'Montserrat', sans-serif; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.6); border-radius: var(--radius); padding: 9px 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.reimport-btn:hover { background: rgba(255,255,255,0.12); }
+.toast { margin-top: 0.75rem; font-size: 11.5px; color: white; font-weight: 600; display: none; }
+.toast.show { display: block; }
+
+.disclaimer { font-size: 10px; color: var(--ink-light); text-align: center; margin-top: 2rem; line-height: 1.7; }
+.footer { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--cream-dark); }
+.footer a { font-size: 12px; font-weight: 500; color: var(--teal); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <div class="header-title">Swiss Army Mum</div>
+    <div class="header-tagline">Not every tool. Just the right ones.</div>
+  </div>
+  <div class="header-logo">
+    <img src="data:image/png;base64,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" alt="Swiss Army Mum logo" width="34" height="34">
+  </div>
+</div>
+
+<div class="page">
+  <div class="badges-row">
+    <span class="badge badge-body">Body</span>
+    <span class="badge badge-mind">Mind</span>
+    <span class="badge badge-type" id="badge-type"></span>
+    <button class="badge badge-lang" id="lang-toggle" onclick="toggleLang()"></button>
+  </div>
+
+  <h1 id="h1"></h1>
+  <p class="intro-body" id="intro-body"></p>
+  <div class="note" id="privacy-note"></div>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-week" onclick="setView('week')"></button>
+    <button class="tab-btn" id="tab-month" onclick="setView('month')"></button>
+  </div>
+
+  <div class="progress-summary" id="progress-summary"></div>
+
+  <div class="layout">
+    <div class="catalog" id="catalog"></div>
+    <div>
+      <div class="calendar-actions">
+        <button class="ghost-btn" id="btn-sample" onclick="loadSample()"></button>
+        <button class="ghost-btn" id="btn-clear" onclick="clearAll()"></button>
+        <div class="view-toggle" id="view-toggle">
+          <button id="vt-cal" onclick="setCalView('calendar')"></button>
+          <button id="vt-list" onclick="setCalView('list')"></button>
+        </div>
+      </div>
+      <div id="calendar-view"></div>
+
+      <div class="export-block">
+        <div class="export-top">
+          <div class="export-block-text">
+            <div class="export-block-title" id="export-title"></div>
+            <div class="export-block-sub" id="export-sub"></div>
+          </div>
+          <button class="export-btn" id="export-btn" onclick="exportICS()"></button>
+        </div>
+        <div class="howto" id="howto"></div>
+        <div class="reimport">
+          <div class="reimport-text" id="reimport-text"></div>
+          <button class="reimport-btn" id="reimport-btn" onclick="document.getElementById('ics-file').click()"></button>
+          <input type="file" id="ics-file" accept=".ics,text/calendar" style="display:none" onchange="handleImport(event)">
+        </div>
+        <div class="toast" id="toast"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="disclaimer" id="disclaimer"></p>
+  <div class="footer"><a href="https://www.swissarmymum.com" target="_blank">swissarmymum.com</a></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this) closePlacer()">
+  <div class="placer" id="placer"></div>
+</div>
+
+<script>
+/* ================= Data ================= */
+const DAYS = ['mon','tue','wed','thu','fri','sat','sun'];
+const DOW = {
+  en: {mon:'Mon',tue:'Tue',wed:'Wed',thu:'Thu',fri:'Fri',sat:'Sat',sun:'Sun'},
+  es: {mon:'Lun',tue:'Mar',wed:'Mié',thu:'Jue',fri:'Vie',sat:'Sáb',sun:'Dom'}
+};
+const AREA_LABELS = {
+  en: { sleep:'Sleep', exercise:'Exercise', stress:'Stress & Resilience', connection:'Connection', inner:'Inner World' },
+  es: { sleep:'Sueño', exercise:'Ejercicio', stress:'Estrés y Resiliencia', connection:'Conexión', inner:'Mundo Interior' }
+};
+const PILLAR_RGB = { body: [2,90,90], mind: [227,44,45], overall: [49,94,99] };
+
+function post(slug, titleEn, titleEs) { return { url: 'https://www.swissarmymum.com/p/' + slug, titleEn, titleEs }; }
+
+/* Every target is the post's own 80/20 or minimum effective dose. */
+const ITEMS = [
+  { id:'winddown', pillar:'body', area:'sleep', nameEn:'Wind-down at a fixed bedtime', nameEs:'Rutina para dormir a hora fija', defaultMin:20, target:5,
+    link: post('sleep','Sleep: The Non-Negotiable Foundation','El sueño: la base no negociable') },
+  { id:'steps', pillar:'body', area:'exercise', nameEn:'Daily walk (step count)', nameEs:'Caminata diaria (pasos)', defaultMin:30, target:5,
+    link: post('exercise-muscle-as-a-longevity-organ','Exercise: Muscle as a Longevity Organ','Ejercicio: el músculo como órgano de longevidad') },
+  { id:'strength', pillar:'body', area:'exercise', nameEn:'Strength training', nameEs:'Entrenamiento de fuerza', defaultMin:30, target:2,
+    link: post('strength-training-for-women-over','Strength Training for Women Over 35','Fuerza para mujeres de más de 35') },
+  { id:'zone2', pillar:'body', area:'exercise', nameEn:'Zone 2 cardio', nameEs:'Cardio Zona 2', defaultMin:30, target:5,
+    link: post('cardio-for-women-over-35-moderate','Cardio for Women Over 35','Cardio para mujeres de más de 35') },
+  { id:'hiit', pillar:'body', area:'exercise', nameEn:'HIIT', nameEs:'HIIT', defaultMin:15, target:2,
+    link: post('cardio-for-women-over-35-moderate','Cardio for Women Over 35','Cardio para mujeres de más de 35') },
+  { id:'balance', pillar:'body', area:'exercise', nameEn:'Balance, mobility & jumps', nameEs:'Equilibrio, movilidad y saltos', defaultMin:12, target:3,
+    link: post('balance-mobility-and-plyometrics','Balance, Mobility & Plyometrics','Equilibrio, movilidad y pliometría') },
+  { id:'review', pillar:'mind', area:'inner', nameEn:'Evening review', nameEs:'Repaso de la noche', defaultMin:2, target:7,
+    link: post('knowing-yourself-self-awareness-inner-life','Knowing Yourself','Conocerte a ti misma') },
+  { id:'breathe', pillar:'mind', area:'stress', nameEn:'Breathing before bed', nameEs:'Respiración antes de dormir', defaultMin:5, target:5,
+    link: post('the-gut-brain-connection-how-stress','The Gut-Brain Connection','La conexión intestino-cerebro') },
+  { id:'connect', pillar:'mind', area:'connection', nameEn:'Reach out to someone', nameEs:'Contacta a alguien', defaultMin:20, target:1,
+    link: post('mind-pillar-mental-well-being-framework','The Mind Pillar','El pilar Mente') },
+  { id:'selftime', pillar:'mind', area:'inner', nameEn:'One hour just for you', nameEs:'Una hora solo para ti', defaultMin:60, target:1,
+    link: post('mind-pillar-mental-well-being-framework','The Mind Pillar','El pilar Mente') }
+];
+
+const MONTHLY_ITEMS = [
+  { id:'pennebaker', pillar:'mind', nameEn:'Pennebaker writing (4 evenings)', nameEs:'Escritura Pennebaker (4 noches)', defaultMin:20, target:4, span:4,
+    link: post('knowing-yourself-self-awareness-inner-life','Knowing Yourself','Conocerte a ti misma') },
+  { id:'retake-sleep', pillar:'body', nameEn:'Retake the sleep self-assessment', nameEs:'Repite la autoevaluación de sueño', defaultMin:5, target:1,
+    link: { url:'https://tools.swissarmymum.com/sleep/', titleEn:'Sleep self-assessment', titleEs:'Autoevaluación de sueño' } },
+  { id:'retake-metabolic', pillar:'body', nameEn:'Retake the metabolic self-assessment', nameEs:'Repite la autoevaluación metabólica', defaultMin:5, target:1,
+    link: { url:'https://tools.swissarmymum.com/metabolic/', titleEn:'Metabolic health self-assessment', titleEs:'Autoevaluación de salud metabólica' } },
+  { id:'retake-priority', pillar:'mind', nameEn:'Re-rank your priorities', nameEs:'Vuelve a ordenar tus prioridades', defaultMin:10, target:1,
+    link: { url:'https://tools.swissarmymum.com/priority/', titleEn:'Prioritization tool', titleEs:'Herramienta de priorización' } }
+];
+
+/* Advice + resources carried into each calendar event's notes. */
+const NOTES = {
+  winddown: { en:'Same bedtime and wake time, weekends too. Cool room, no caffeine after 1 PM, morning light tomorrow.',
+              es:'Misma hora para acostarte y levantarte, también el fin de semana. Habitación fresca, nada de cafeína después de las 13 h y luz natural mañana temprano.' },
+  steps:    { en:'Aim for 7,000 to 8,000 steps a day. Missed a day? The weekly average (around 50,000) is what counts.',
+              es:'Apunta a 7.000 a 8.000 pasos al día. ¿Un día no llegas? Lo que cuenta es la media semanal (unos 50.000).' },
+  strength: { en:'Pick a weight where 6 to 8 clean reps is hard. Brace, then lift. 48 to 72 hours between sessions.',
+              es:'Elige un peso con el que 6 a 8 repeticiones limpias cuesten. Primero activa el core, luego levanta. Deja 48 a 72 horas entre sesiones.',
+              res: [ ['Lift with Cee, Playlist A','https://www.youtube.com/playlist?list=PLANH0p6UyDZQKikV9900vyendgdGKBgmM'],
+                     ['Lift with Cee, Playlist B','https://www.youtube.com/playlist?list=PLANH0p6UyDZTYe8kOFD8aAf9YckUZncxQ'] ] },
+  zone2:    { en:'Talk test: full sentences, but breathing harder. If you can sing, speed up.',
+              es:'Prueba del habla: puedes decir frases completas, pero respiras más fuerte. Si puedes cantar, acelera.' },
+  hiit:     { en:'All-out bursts until breathless, then full recovery. 2x a week max.',
+              es:'Ráfagas a tope hasta quedarte sin aliento, luego recuperación completa. Máximo 2 veces por semana.',
+              res: [ ['Earth & Owl, menopause playlist','https://www.youtube.com/playlist?list=PLLAFfYE-X47EzHAItruEVGk7S7X_vADLT'],
+                     ['Earth & Owl, 30/90','https://youtu.be/uGdDG5DOB7w'],
+                     ['Earth & Owl, 30/90 (v2)','https://youtu.be/BRT5Gt_G3_g'],
+                     ['Earth & Owl, Tabata','https://youtu.be/DR_cbsU_DCA'],
+                     ['Michelle Briehler, 10 min','https://youtu.be/vdfHlgeL3ck'] ] },
+  balance:  { en:'A few max-effort jumps, single-leg balance, then roll or stretch.',
+              es:'Unos saltos al máximo, equilibrio sobre una pierna y luego rodillo o estiramientos.',
+              res: [ ['Charlie Follows, 10-15 min yoga','https://www.youtube.com/playlist?list=PLJvDaXFqvSLNBJcVRhgdT0RVs_rY2EoNX'],
+                     ['Well and Good, foam rolling 15 min','https://www.youtube.com/watch?v=KWGsSq0J1Bk'],
+                     ['Tom Peto, foam rolling 10 min','https://youtu.be/Oz4xHEgMaLY'],
+                     ['Strength and Flow Fitness, mobility 15 min','https://youtu.be/PTs1LpVdW-A'] ] },
+  review:   { en:'Two minutes, three questions. Where did I fall short today? Where did I act well? What do I do differently tomorrow?',
+              es:'Dos minutos, tres preguntas. ¿Dónde me he quedado corta hoy? ¿Dónde he actuado bien? ¿Qué haré distinto mañana?' },
+  breathe:  { en:'5 minutes of slow breathing before bed.', es:'5 minutos de respiración lenta antes de dormir.' },
+  connect:  { en:'A real conversation, not a like. Call, voice note, coffee.', es:'Una conversación de verdad, no un like. Llamada, audio, un café.' },
+  selftime: { en:'Rest, not chores. Knitting, baking, a long walk with the dog.', es:'Descanso, no tareas. Tejer, hornear, un paseo largo con el perro.' },
+  pennebaker: { en:'What has weighed on you this month? Write 15 to 20 minutes about that one thing, four evenings in a row. Private, and grammar does not matter.',
+                es:'¿Qué te ha pesado este mes? Escribe 15 a 20 minutos sobre eso, cuatro noches seguidas. Es privado y la gramática no importa.' },
+  'retake-sleep':     { en:'Compare with last month’s screenshot. One change at a time.', es:'Compara con la captura del mes pasado. Un cambio cada vez.' },
+  'retake-metabolic': { en:'Compare with last month’s screenshot. One change at a time.', es:'Compara con la captura del mes pasado. Un cambio cada vez.' },
+  'retake-priority':  { en:'New month, new list. Rank it again and start with number one.', es:'Mes nuevo, lista nueva. Vuelve a ordenarla y empieza por la primera.' }
+};
+
+const strings = {
+  en: {
+    badgeType: 'Planner', langToggle: 'ES',
+    areaBodyLabel: 'Sleep & Exercise', areaMindLabel: 'Mental Well-Being',
+    h1: 'Build the habits that matter',
+    introBody: 'Everything in the list is SAM\u2019s 80/20: the smallest dose that gets you most of the benefit. Hit + to place a habit on as many days as you like, and watch the numbers climb as you close in on each target. When the week looks right, export it straight to your calendar.',
+    privacyNote: 'No data is stored. Everything stays in your browser and disappears when you close the tab, so export when you\u2019re done.',
+    tabWeek: 'Week', tabMonth: 'Month (less frequent)',
+    overall: 'Overall', pillarFocusLabel: 'Focus on',
+    comingSoon: 'Glow and Flow are coming soon. For now, build around Body and Mind.',
+    sampleWeek: 'Load sample week', sampleMonth: 'Load sample month', clearBtn: 'Clear all',
+    vtCal: 'Calendar', vtList: 'List',
+    exportTitleWeek: 'Export your week', exportSubWeek: 'One .ics file. Every block becomes a weekly repeating event. Set it up once, then it runs on autopilot.',
+    exportTitleMonth: 'Export your month', exportSubMonth: 'One .ics file. Every check-in repeats monthly on the same date.',
+    exportBtn: 'Export to calendar (.ics)',
+    howto: [
+      ['1. Download', 'Click export. You get one .ics file, the universal calendar format.'],
+      ['2. Import', ['<b>Google Calendar:</b> Settings \u2192 Import & export \u2192 Import', '<b>Apple Calendar:</b> double-click the file', '<b>Outlook:</b> File \u2192 Open & Export \u2192 Import/Export']],
+      ['3. Move things around', 'Busy Tuesday? Drag that one event to another slot in your calendar and choose \u201cthis event only\u201d. The rest of the series stays put.'],
+      ['4. Follow the plan', 'Each event repeats on its own, and its notes carry the advice and resources for that habit. Just open it and press play.'],
+      ['5. Reassess and tweak', 'Every few weeks, check what stuck and what didn\u2019t. Adjust straight in your calendar, or upload your export below and rebuild from there.']
+    ],
+    reimportText: 'Already exported? Upload that file to pick up where you left off.',
+    reimportBtn: 'Upload previous export',
+    importDone: (n, s) => `Loaded ${n} block${n===1?'':'s'} from your file.` + (s ? ` ${s} event${s===1?'':'s'} didn\u2019t match a SAM habit and ${s===1?'was':'were'} skipped.` : ''),
+    importNone: 'No SAM habits found in that file. Make sure it\u2019s a file you exported from this planner.',
+    exportEmpty: 'Nothing to export yet. Add a few habits first.',
+    placerDays: 'Which days?', placerDaysHint: 'Pick as many as you like',
+    placerDate: 'Which date?', placerStart: 'First evening', spanHint: n => `Placed on ${n} evenings in a row, every month.`, allDays: 'Every day', weekdays: 'Weekdays', none: 'Clear',
+    placerTime: 'Time', placerDur: 'Duration (min)',
+    placerAdd: (n) => n > 1 ? `Add ${n} blocks` : 'Add block', placerAddMonth: 'Add to month', placerCancel: 'Cancel',
+    dayEmpty: 'Nothing yet',
+    perWeek: '/week', perMonth: '/month',
+    disclaimer: 'Targets come from SAM\u2019s Body and Mind posts. They are minimums that capture most of the benefit, not ceilings. Consistency beats perfection: 70% most weeks beats 100% once. Educational, not personal medical advice.'
+  },
+  es: {
+    badgeType: 'Planificador', langToggle: 'EN',
+    areaBodyLabel: 'Sueño y Ejercicio', areaMindLabel: 'Bienestar Mental',
+    h1: 'Construye los hábitos que importan',
+    introBody: 'Todo lo que ves en la lista es el 80/20 de SAM: la dosis mínima que te da la mayor parte del beneficio. Pulsa + para colocar un hábito en tantos días como quieras y mira cómo suben los porcentajes a medida que te acercas a cada objetivo. Cuando la semana te convenza, expórtala directamente a tu calendario.',
+    privacyNote: 'No se guarda ningún dato. Todo se queda en tu navegador y desaparece al cerrar la pestaña, así que exporta cuando termines.',
+    tabWeek: 'Semana', tabMonth: 'Mes (lo menos frecuente)',
+    overall: 'General', pillarFocusLabel: 'Enfócate en',
+    comingSoon: 'Glow y Flow llegarán pronto. Por ahora, construye alrededor de Body y Mind.',
+    sampleWeek: 'Cargar semana de ejemplo', sampleMonth: 'Cargar mes de ejemplo', clearBtn: 'Borrar todo',
+    vtCal: 'Calendario', vtList: 'Lista',
+    exportTitleWeek: 'Exporta tu semana', exportSubWeek: 'Un archivo .ics. Cada bloque se convierte en un evento que se repite cada semana. Lo configuras una vez y funciona solo.',
+    exportTitleMonth: 'Exporta tu mes', exportSubMonth: 'Un archivo .ics. Cada cita se repite cada mes en la misma fecha.',
+    exportBtn: 'Exportar al calendario (.ics)',
+    howto: [
+      ['1. Descarga', 'Pulsa exportar. Obtienes un archivo .ics, el formato universal de calendario.'],
+      ['2. Importa', ['<b>Google Calendar:</b> Configuración \u2192 Importar y exportar \u2192 Importar', '<b>Calendario de Apple:</b> doble clic en el archivo', '<b>Outlook:</b> Archivo \u2192 Abrir y exportar \u2192 Importar/Exportar']],
+      ['3. Muévelo cuando haga falta', '¿Martes complicado? Arrastra ese evento a otro hueco de tu calendario y elige \u00absolo este evento\u00bb. El resto de la serie no se mueve.'],
+      ['4. Sigue el plan', 'Cada evento se repite solo, y sus notas incluyen los consejos y recursos de ese hábito. Ábrelo y dale al play.'],
+      ['5. Revisa y ajusta', 'Cada pocas semanas, mira qué se ha quedado y qué no. Ajústalo directamente en tu calendario, o sube abajo tu exportación y reconstruye desde ahí.']
+    ],
+    reimportText: '¿Ya exportaste antes? Sube ese archivo para retomarlo donde lo dejaste.',
+    reimportBtn: 'Subir exportación anterior',
+    importDone: (n, s) => `Se han cargado ${n} bloque${n===1?'':'s'} de tu archivo.` + (s ? ` ${s} evento${s===1?'':'s'} no coincidía${s===1?'':'n'} con ningún hábito SAM y se ha${s===1?'':'n'} omitido.` : ''),
+    importNone: 'No hemos encontrado hábitos SAM en ese archivo. Asegúrate de que es un archivo exportado desde este planificador.',
+    exportEmpty: 'Todavía no hay nada que exportar. Añade algunos hábitos primero.',
+    placerDays: '¿Qué días?', placerDaysHint: 'Elige todos los que quieras',
+    placerDate: '¿Qué fecha?', placerStart: 'Primera noche', spanHint: n => `Se coloca en ${n} noches seguidas, cada mes.`, allDays: 'Todos', weekdays: 'Entre semana', none: 'Ninguno',
+    placerTime: 'Hora', placerDur: 'Duración (min)',
+    placerAdd: (n) => n > 1 ? `Añadir ${n} bloques` : 'Añadir bloque', placerAddMonth: 'Añadir al mes', placerCancel: 'Cancelar',
+    dayEmpty: 'Nada todavía',
+    perWeek: '/sem', perMonth: '/mes',
+    disclaimer: 'Los objetivos vienen de los artículos de Body y Mind de SAM. Son mínimos que recogen la mayor parte del beneficio, no techos. La constancia gana a la perfección: un 70% casi todas las semanas vale más que un 100% una vez. Contenido educativo, no consejo médico personal.'
+  }
+};
+
+/* ================= State ================= */
+let lang = 'en';
+let view = 'week';
+let calView = window.innerWidth < 700 ? 'list' : 'calendar'; // phones start in list view
+let activePillars = { body: true, mind: true };
+let placedBlocks = [];   // {uid, itemId, day, time, min}
+let placedMonthly = [];  // {uid, itemId, date, time, min}
+let placerTarget = null;
+let selectedDays = new Set();
+let uidCounter = 1;
+
+const t = () => strings[lang];
+const itemById = id => ITEMS.find(i => i.id === id);
+const monthlyById = id => MONTHLY_ITEMS.find(i => i.id === id);
+const nameOf = item => lang === 'en' ? item.nameEn : item.nameEs;
+const pad = n => String(n).padStart(2, '0');
+const toMin = hhmm => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
+const fromMin = m => pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60);
+
+/* ================= Dates ================= */
+function getWeekDates() {
+  const today = new Date();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + (today.getDay() === 0 ? -6 : 1 - today.getDay()));
+  const dates = {};
+  DAYS.forEach((d, i) => { const dt = new Date(monday); dt.setDate(monday.getDate() + i); dates[d] = dt; });
+  return dates;
+}
+function nextDateForWeekday(dayKey) {
+  const today = new Date();
+  let diff = DAYS.indexOf(dayKey) - ((today.getDay() + 6) % 7);
+  if (diff < 0) diff += 7;
+  const dt = new Date(today); dt.setDate(today.getDate() + diff);
+  return dt;
+}
+function icsStamp(dt) {
+  return dt.getFullYear() + pad(dt.getMonth() + 1) + pad(dt.getDate()) + 'T' + pad(dt.getHours()) + pad(dt.getMinutes()) + '00';
+}
+
+/* ================= Progress ================= */
+function frac(itemId, monthly) {
+  const item = monthly ? monthlyById(itemId) : itemById(itemId);
+  const list = monthly ? placedMonthly : placedBlocks;
+  const count = list.filter(b => b.itemId === itemId).length;
+  return { count, target: item.target, f: Math.min(1, count / item.target) };
+}
+function areaFrac(pillar, area) {
+  const items = ITEMS.filter(i => i.pillar === pillar && i.area === area);
+  return items.reduce((s, i) => s + frac(i.id).f, 0) / items.length;
+}
+function areasOf(pillar) { return [...new Set(ITEMS.filter(i => i.pillar === pillar).map(i => i.area))]; }
+function pillarFrac(pillar) {
+  if (view === 'month') {
+    const items = MONTHLY_ITEMS.filter(i => i.pillar === pillar);
+    return items.reduce((s, i) => s + frac(i.id, true).f, 0) / items.length;
+  }
+  const areas = areasOf(pillar);
+  return areas.reduce((s, a) => s + areaFrac(pillar, a), 0) / areas.length;
+}
+function overallFrac() {
+  const ps = Object.keys(activePillars).filter(p => activePillars[p]);
+  return ps.length ? ps.reduce((s, p) => s + pillarFrac(p), 0) / ps.length : 0;
+}
+
+function tint(rgb, f) { return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${(0.12 + 0.88 * f).toFixed(3)})`; }
+function textOn(rgb, f) { return f >= 0.5 ? '#ffffff' : `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`; }
+function stat(f, cls, label, color) {
+  return `<div class="stat ${cls}">
+    <div class="stat-num" style="${color ? 'color:' + color : ''}">${Math.round(f * 100)}<sup>%</sup></div>
+    <div class="stat-bar"><i style="width:${Math.round(f * 100)}%;background:${color || 'var(--teal)'}"></i></div>
+    <div class="stat-label">${label}</div>
+  </div>`;
+}
+function renderProgress() {
+  const s = t();
+  let html = stat(overallFrac(), 'stat-overall', s.overall);
+  ['body', 'mind'].forEach(p => {
+    if (activePillars[p]) html += stat(pillarFrac(p), 'stat-pillar', p === 'body' ? 'Body' : 'Mind', p === 'body' ? 'var(--body-green)' : 'var(--mind-red)');
+  });
+  html += `<div class="pillar-focus">
+    <div class="pillar-focus-label">${s.pillarFocusLabel}</div>
+    <div class="pillar-toggles">
+      <button class="pillar-toggle body ${activePillars.body ? 'on' : ''}" onclick="togglePillar('body')"><span class="pillar-toggle-dot"></span>Body</button>
+      <button class="pillar-toggle mind ${activePillars.mind ? 'on' : ''}" onclick="togglePillar('mind')"><span class="pillar-toggle-dot"></span>Mind</button>
+    </div>
+  </div>`;
+  document.getElementById('progress-summary').innerHTML = html;
+}
+
+/* ================= Catalog ================= */
+function catalogRow(item, monthly) {
+  const s = t();
+  const fr = frac(item.id, monthly);
+  const rgb = PILLAR_RGB[item.pillar];
+  const linkTitle = lang === 'en' ? item.link.titleEn : item.link.titleEs;
+  return `<div class="catalog-item">
+    <button class="catalog-add-btn" onclick="openPlacer('${item.id}', ${monthly})" aria-label="+">+</button>
+    <div class="catalog-item-main">
+      <div class="catalog-item-name">${nameOf(item)}</div>
+      <div class="catalog-item-meta">${item.defaultMin} min &middot; ${item.target}x${monthly ? s.perMonth : s.perWeek}</div>
+    </div>
+    <a class="catalog-item-link" href="${item.link.url}" target="_blank" title="${linkTitle}">&#128279;</a>
+    <div class="catalog-item-counter" style="background:${tint(rgb, fr.f)};color:${textOn(rgb, fr.f)};">${fr.count}/${item.target}</div>
+  </div>`;
+}
+function renderCatalog() {
+  let html = '';
+  ['body', 'mind'].forEach(p => {
+    if (!activePillars[p]) return;
+    html += `<div class="catalog-pillar-heading"><span class="catalog-pillar-dot ${p}"></span>${p === 'body' ? 'Body' : 'Mind'}</div>`;
+    if (view === 'week') {
+      areasOf(p).forEach(a => {
+        html += `<div class="catalog-area-heading">${AREA_LABELS[lang][a]}</div>`;
+        ITEMS.filter(i => i.pillar === p && i.area === a).forEach(i => html += catalogRow(i, false));
+      });
+    } else {
+      MONTHLY_ITEMS.filter(i => i.pillar === p).forEach(i => html += catalogRow(i, true));
+    }
+  });
+  html += `<div class="coming-soon-note">${t().comingSoon}</div>`;
+  document.getElementById('catalog').innerHTML = html;
+}
+
+/* ================= Placer ================= */
+function openPlacer(itemId, monthly) {
+  const s = t();
+  const item = monthly ? monthlyById(itemId) : itemById(itemId);
+  placerTarget = { itemId, monthly };
+  selectedDays = new Set();
+  let body = `<h3>${nameOf(item)}</h3>`;
+  if (monthly) {
+    const today = new Date(), y = today.getFullYear(), m = today.getMonth();
+    const last = 28; // every month has a 28th, so the repeat never skips
+    if (item.span) body += `<p style="font-size:11.5px;color:var(--ink-mid);line-height:1.5;margin-bottom:0.8rem;">${s.spanHint(item.span)}</p>`;
+    body += `<div class="placer-label">${item.span ? s.placerStart : s.placerDate}</div>
+      <div class="placer-field"><input type="date" id="placer-date" value="${y}-${pad(m + 1)}-${pad(Math.min(28, today.getDate()))}" min="${y}-${pad(m + 1)}-01" max="${y}-${pad(m + 1)}-${pad(last)}"></div>`;
+  } else {
+    body += `<div class="placer-label">${s.placerDays}<span class="placer-hint">${s.placerDaysHint}</span></div><div class="day-chips">`;
+    DAYS.forEach(d => body += `<button class="day-chip" data-day="${d}" onclick="toggleDayChip('${d}')">${DOW[lang][d]}</button>`);
+    body += `</div><div class="chip-shortcuts">
+      <button onclick="setDayChips(DAYS)">${s.allDays}</button>
+      <button onclick="setDayChips(['mon','tue','wed','thu','fri'])">${s.weekdays}</button>
+      <button onclick="setDayChips([])">${s.none}</button></div>`;
+  }
+  body += `<div class="placer-row">
+    <div class="placer-field"><label>${s.placerTime}</label><input type="time" id="placer-time" value="${item.span ? '21:00' : '07:00'}"></div>
+    <div class="placer-field"><label>${s.placerDur}</label><input type="number" id="placer-dur" value="${item.defaultMin}" min="1" max="240" step="1"></div>
+  </div>
+  <div class="placer-actions">
+    <button class="ghost-btn" onclick="closePlacer()">${s.placerCancel}</button>
+    <button class="primary-btn" id="placer-confirm" onclick="confirmPlace()" ${monthly ? '' : 'disabled'}>${monthly ? s.placerAddMonth : s.placerAdd(0)}</button>
+  </div>`;
+  document.getElementById('placer').innerHTML = body;
+  document.getElementById('overlay').classList.add('active');
+}
+function refreshChips() {
+  document.querySelectorAll('.day-chip').forEach(el => el.classList.toggle('selected', selectedDays.has(el.dataset.day)));
+  const btn = document.getElementById('placer-confirm');
+  btn.disabled = selectedDays.size === 0;
+  btn.textContent = t().placerAdd(selectedDays.size);
+}
+function toggleDayChip(d) { selectedDays.has(d) ? selectedDays.delete(d) : selectedDays.add(d); refreshChips(); }
+function setDayChips(list) { selectedDays = new Set(list); refreshChips(); }
+function closePlacer() { document.getElementById('overlay').classList.remove('active'); placerTarget = null; }
+function confirmPlace() {
+  if (!placerTarget) return;
+  const time = document.getElementById('placer-time').value || '07:00';
+  const min = Math.max(1, parseInt(document.getElementById("placer-dur").value, 10) || 15);
+  if (placerTarget.monthly) {
+    const date = document.getElementById('placer-date').value;
+    if (!date) return;
+    const span = monthlyById(placerTarget.itemId).span || 1;
+    const [y, m, d] = date.split('-').map(Number);
+    const last = 28;
+    const startDay = Math.max(1, Math.min(d, last - span + 1));   // keep every evening inside the month
+    for (let i = 0; i < span; i++)
+      placedMonthly.push({ uid: uidCounter++, itemId: placerTarget.itemId, date: `${y}-${pad(m)}-${pad(startDay + i)}`, time, min });
+  } else {
+    if (selectedDays.size === 0) return;
+    DAYS.filter(d => selectedDays.has(d)).forEach(day =>
+      placedBlocks.push({ uid: uidCounter++, itemId: placerTarget.itemId, day, time, min }));
+  }
+  closePlacer();
+  renderAll();
+}
+function removeBlock(uid) { placedBlocks = placedBlocks.filter(b => b.uid !== uid); renderAll(); }
+function removeMonthly(uid) { placedMonthly = placedMonthly.filter(b => b.uid !== uid); renderAll(); }
+
+/* ================= Week: list view ================= */
+function visibleBlocks(day) {
+  return placedBlocks.filter(b => b.day === day && activePillars[itemById(b.itemId).pillar]).sort((a, b) => a.time.localeCompare(b.time));
+}
+function renderWeekList() {
+  const s = t(), dates = getWeekDates();
+  let html = '<div class="week-list">';
+  DAYS.forEach(day => {
+    const dt = dates[day], blocks = visibleBlocks(day);
+    html += `<div class="day-card"><div class="day-card-head"><span>${DOW[lang][day]}</span><span class="day-card-date">${dt.getDate()}/${dt.getMonth() + 1}</span></div>`;
+    if (!blocks.length) html += `<div class="day-card-empty">${s.dayEmpty}</div>`;
+    blocks.forEach(b => {
+      const item = itemById(b.itemId);
+      html += `<div class="day-block ${item.pillar}"><span class="day-block-dot"></span>
+        <span class="day-block-text"><span class="day-block-time">${b.time}</span> &middot; ${nameOf(item)}</span>
+        <button class="x-btn" onclick="removeBlock(${b.uid})" aria-label="Remove">&times;</button></div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('calendar-view').innerHTML = html + '</div>';
+}
+
+/* ================= Week: calendar view ================= */
+const HOUR_H = 44;
+const MIN_VIS = 30; // short habits are drawn as at least 30 min so they stay readable
+function renderWeekCalendar() {
+  const dates = getWeekDates();
+  // Visible range: 06:00–22:00 by default, stretched to fit any block outside it.
+  let startH = 6, endH = 22;
+  placedBlocks.forEach(b => {
+    const st = toMin(b.time), en = st + Math.max(b.min, MIN_VIS);
+    startH = Math.min(startH, Math.floor(st / 60));
+    endH = Math.max(endH, Math.min(24, Math.ceil(en / 60)));
+  });
+  const totalH = (endH - startH) * HOUR_H;
+
+  let html = `<div class="cal-scroll"><div class="cal" style="--hour-h:${HOUR_H}px;">`;
+  html += '<div class="cal-head"></div>';
+  DAYS.forEach(d => { const dt = dates[d]; html += `<div class="cal-head">${DOW[lang][d]}<span>${dt.getDate()}/${dt.getMonth() + 1}</span></div>`; });
+
+  html += `<div class="cal-hours" style="height:${totalH}px;">`;
+  for (let h = startH + 1; h < endH; h++) html += `<div class="cal-hour-label" style="top:${(h - startH) * HOUR_H}px;">${pad(h)}:00</div>`;
+  html += '</div>';
+
+  DAYS.forEach(day => {
+    const blocks = visibleBlocks(day);
+    // Pack overlapping blocks into side-by-side lanes.
+    const lanes = [];
+    const placed = blocks.map(b => {
+      const st = toMin(b.time), en = st + Math.max(b.min, MIN_VIS);
+      let lane = lanes.findIndex(endT => endT <= st);
+      if (lane === -1) { lane = lanes.length; lanes.push(en); } else lanes[lane] = en;
+      return { b, st, en, lane };
+    });
+    // Each block's width depends on how many lanes are busy during its own time span.
+    html += `<div class="cal-day" style="height:${totalH}px;">`;
+    placed.forEach(p => {
+      const overlapping = placed.filter(q => q.st < p.en && q.en > p.st);
+      const cols = Math.max(...overlapping.map(q => q.lane)) + 1;
+      const item = itemById(p.b.itemId);
+      const top = (p.st - startH * 60) / 60 * HOUR_H;
+      const height = (p.en - p.st) / 60 * HOUR_H - 2;
+      const width = 100 / cols;
+      html += `<div class="cal-block ${item.pillar}" style="top:${top}px;height:${height}px;left:calc(${p.lane * width}% + 2px);width:calc(${width}% - 4px);" title="${p.b.time} · ${nameOf(item)} (${p.b.min} min)">
+        <span class="cal-block-time">${p.b.time}</span> ${nameOf(item)}
+        <button class="x-btn" onclick="removeBlock(${p.b.uid})" aria-label="Remove">&times;</button></div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('calendar-view').innerHTML = html + '</div></div>';
+}
+
+/* ================= Month view ================= */
+function renderMonthView() {
+  const today = new Date(), y = today.getFullYear(), m = today.getMonth();
+  const firstDow = (new Date(y, m, 1).getDay() + 6) % 7;
+  const days = new Date(y, m + 1, 0).getDate();
+  let html = '<div class="month-grid">';
+  DAYS.forEach(d => html += `<div class="month-dow">${DOW[lang][d]}</div>`);
+  for (let i = 0; i < firstDow; i++) html += '<div class="month-cell empty"></div>';
+  for (let d = 1; d <= days; d++) {
+    const key = `${y}-${pad(m + 1)}-${pad(d)}`;
+    html += `<div class="month-cell"><div class="month-cell-num">${d}</div>`;
+    placedMonthly.filter(b => b.date === key && activePillars[monthlyById(b.itemId).pillar]).forEach(b => {
+      const item = monthlyById(b.itemId);
+      html += `<div class="month-block ${item.pillar}">${nameOf(item)}<button class="x-btn" onclick="removeMonthly(${b.uid})" aria-label="Remove">&times;</button></div>`;
+    });
+    html += '</div>';
+  }
+  document.getElementById('calendar-view').innerHTML = html + '</div>';
+}
+
+/* ================= Sample data (only on request) ================= */
+const SAMPLE_WEEK = [
+  ['mon','strength','07:00'], ['mon','steps','18:00'], ['mon','winddown','21:40'], ['tue','zone2','18:00'], ['tue','balance','18:40'], ['tue','breathe','21:00'], ['tue','winddown','21:40'],
+  ['wed','strength','07:00'], ['wed','connect','12:30'], ['wed','steps','18:00'], ['wed','breathe','21:00'], ['wed','winddown','21:40'],
+  ['thu','zone2','07:00'], ['thu','hiit','18:00'], ['thu','breathe','21:30'],
+  ['fri','steps','07:00'], ['fri','zone2','18:00'], ['fri','balance','18:40'], ['fri','winddown','21:40'], ['sat','steps','09:00'], ['sat','zone2','10:00'], ['sat','selftime','16:00'], ['sat','breathe','21:00'],
+  ['sun','steps','08:00'], ['sun','zone2','09:00'], ['sun','balance','10:00'], ['sun','hiit','17:00'], ['sun','breathe','21:00'], ['sun','winddown','21:40'],
+  ['mon','review','21:20'], ['tue','review','21:20'], ['wed','review','21:20'], ['thu','review','21:20'], ['fri','review','21:20'], ['sat','review','21:20'], ['sun','review','21:20']
+];
+function loadSample() {
+  if (view === 'week') {
+    placedBlocks = SAMPLE_WEEK.map(([day, itemId, time]) => ({ uid: uidCounter++, itemId, day, time, min: itemById(itemId).defaultMin }));
+  } else {
+    const today = new Date(), ym = `${today.getFullYear()}-${pad(today.getMonth() + 1)}`;
+    placedMonthly = [
+      { uid: uidCounter++, itemId: 'retake-sleep', date: ym + '-01', time: '09:00', min: 5 },
+      { uid: uidCounter++, itemId: 'retake-metabolic', date: ym + '-01', time: '09:10', min: 5 },
+      { uid: uidCounter++, itemId: 'retake-priority', date: ym + '-01', time: '09:20', min: 10 },
+      ...[24, 25, 26, 27].map(d => ({ uid: uidCounter++, itemId: 'pennebaker', date: ym + '-' + d, time: '21:00', min: 20 }))
+    ];
+  }
+  renderAll();
+}
+function clearAll() { if (view === 'week') placedBlocks = []; else placedMonthly = []; renderAll(); }
+
+/* ================= ICS export ================= */
+function icsEscape(str) { return String(str).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+// RFC 5545 asks for lines of at most 75 octets; fold longer ones.
+function fold(line) {
+  const bytes = new TextEncoder().encode(line);
+  if (bytes.length <= 75) return line;
+  const out = []; let cur = '', curLen = 0;
+  for (const ch of line) {
+    const len = new TextEncoder().encode(ch).length;
+    if (curLen + len > (out.length ? 74 : 75)) { out.push(cur); cur = ''; curLen = 0; }
+    cur += ch; curLen += len;
+  }
+  out.push(cur);
+  return out.join('\r\n ');
+}
+function eventDescription(item) {
+  const n = NOTES[item.id] || {};
+  const linkTitle = lang === 'en' ? item.link.titleEn : item.link.titleEs;
+  let out = (n[lang] || '');
+  if (n.res && n.res.length) out += '\n\n' + (lang === 'en' ? 'Resources:' : 'Recursos:') + '\n' + n.res.map(([l, u]) => `\u2022 ${l}: ${u}`).join('\n');
+  out += '\n\n' + (lang === 'en' ? 'Read more on Swiss Army Mum' : 'Más en Swiss Army Mum') + `: ${linkTitle} ${item.link.url}`;
+  return out;
+}
+function vevent(lines, uid, start, min, rrule, item, monthly) {
+  const end = new Date(start.getTime() + min * 60000);
+  lines.push('BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + icsStamp(new Date()),
+    'DTSTART:' + icsStamp(start), 'DTEND:' + icsStamp(end), 'RRULE:' + rrule,
+    'SUMMARY:' + icsEscape('SAM \u00b7 ' + nameOf(item)),
+    'DESCRIPTION:' + icsEscape(eventDescription(item)),
+    'URL:' + item.link.url, 'X-SAM-ITEM:' + item.id, 'END:VEVENT');
+}
+function exportICS() {
+  const list = view === 'week' ? placedBlocks : placedMonthly;
+  if (!list.length) { showToast(t().exportEmpty); return; }
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Swiss Army Mum//Weekly Planner//EN', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:SAM'];
+  const stamp = Date.now();
+  if (view === 'week') {
+    placedBlocks.forEach(b => {
+      const start = nextDateForWeekday(b.day);
+      const [h, m] = b.time.split(':').map(Number); start.setHours(h, m, 0, 0);
+      vevent(lines, `sam-w-${b.uid}-${stamp}@swissarmymum.com`, start, b.min, 'FREQ=WEEKLY', itemById(b.itemId), false);
+    });
+  } else {
+    placedMonthly.forEach(b => {
+      const [y, mo, d] = b.date.split('-').map(Number);
+      const [h, m] = b.time.split(':').map(Number);
+      vevent(lines, `sam-m-${b.uid}-${stamp}@swissarmymum.com`, new Date(y, mo - 1, d, h, m), b.min, 'FREQ=MONTHLY;BYMONTHDAY=' + d, monthlyById(b.itemId), true);
+    });
+  }
+  lines.push('END:VCALENDAR');
+  const blob = new Blob([lines.map(fold).join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = view === 'week' ? 'sam-week.ics' : 'sam-month.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ================= ICS re-import ================= */
+function parseICS(text) {
+  const unfolded = text.replace(/\r?\n[ \t]/g, '');
+  const events = unfolded.split('BEGIN:VEVENT').slice(1).map(s => s.split('END:VEVENT')[0]);
+  const weekly = [], monthly = []; let skipped = 0;
+  const field = (block, key) => {
+    const m = block.match(new RegExp('^' + key + '(?:;[^:\\r\\n]*)?:(.*)$', 'm'));
+    return m ? m[1].trim() : null;
+  };
+  const parseDT = v => {
+    const m = v && v.match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/);
+    return m ? new Date(+m[1], +m[2] - 1, +m[3], +(m[4] || 9), +(m[5] || 0)) : null;
+  };
+  const allNames = id => { const i = itemById(id) || monthlyById(id); return i; };
+  events.forEach(ev => {
+    const rrule = field(ev, 'RRULE') || '';
+    const isMonthly = /FREQ=MONTHLY/i.test(rrule);
+    const isWeekly = /FREQ=WEEKLY/i.test(rrule);
+    const pool = isMonthly ? MONTHLY_ITEMS : ITEMS;
+    // Prefer our own item tag; fall back to matching the title in either language.
+    let item = null;
+    const tag = field(ev, 'X-SAM-ITEM');
+    if (tag) item = pool.find(i => i.id === tag);
+    if (!item) {
+      const summary = (field(ev, 'SUMMARY') || '').replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/^SAM\s*\u00b7\s*/, '').trim().toLowerCase();
+      item = pool.find(i => i.nameEn.toLowerCase() === summary || i.nameEs.toLowerCase() === summary);
+    }
+    const start = parseDT(field(ev, 'DTSTART'));
+    if (!item || !start || (!isWeekly && !isMonthly)) { skipped++; return; }
+    const end = parseDT(field(ev, 'DTEND'));
+    const min = end ? Math.max(1, Math.round((end - start) / 60000)) : item.defaultMin;
+    const time = pad(start.getHours()) + ':' + pad(start.getMinutes());
+    if (isWeekly) {
+      const bydays = (rrule.match(/BYDAY=([A-Z,]+)/i) || [])[1];
+      const map = { MO:'mon', TU:'tue', WE:'wed', TH:'thu', FR:'fri', SA:'sat', SU:'sun' };
+      const days = bydays ? bydays.split(',').map(c => map[c.toUpperCase()]).filter(Boolean) : [DAYS[(start.getDay() + 6) % 7]];
+      days.forEach(day => weekly.push({ uid: uidCounter++, itemId: item.id, day, time, min }));
+    } else {
+      const bmd = (rrule.match(/BYMONTHDAY=(\d+)/i) || [])[1];
+      const today = new Date(), last = 28;
+      const dom = Math.min(last, +(bmd || start.getDate()));
+      monthly.push({ uid: uidCounter++, itemId: item.id, date: `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(dom)}`, time, min });
+    }
+  });
+  return { weekly, monthly, skipped };
+}
+function handleImport(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const { weekly, monthly, skipped } = parseICS(String(reader.result));
+    if (!weekly.length && !monthly.length) { showToast(t().importNone); return; }
+    if (weekly.length) placedBlocks = weekly;
+    if (monthly.length) placedMonthly = monthly;
+    if (!weekly.length && monthly.length && view === 'week') setView('month', true);
+    else if (weekly.length && !monthly.length && view === 'month') setView('week', true);
+    renderAll();
+    showToast(t().importDone(weekly.length + monthly.length, skipped));
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 6000);
+}
+
+/* ================= Render ================= */
+function toggleLang() { lang = lang === 'en' ? 'es' : 'en'; document.documentElement.lang = lang; renderAll(); }
+function setView(v, silent) {
+  view = v;
+  document.getElementById('tab-week').classList.toggle('active', v === 'week');
+  document.getElementById('tab-month').classList.toggle('active', v === 'month');
+  if (!silent) renderAll();
+}
+function setCalView(v) { calView = v; renderAll(); }
+function togglePillar(p) { activePillars[p] = !activePillars[p]; renderAll(); }
+
+function renderStrings() {
+  const s = t();
+  const set = (id, v) => document.getElementById(id).textContent = v;
+  set('badge-type', s.badgeType); set('lang-toggle', s.langToggle);
+  set('h1', s.h1); set('intro-body', s.introBody); set('privacy-note', s.privacyNote);
+  set('tab-week', s.tabWeek); set('tab-month', s.tabMonth);
+  set('btn-sample', view === 'week' ? s.sampleWeek : s.sampleMonth); set('btn-clear', s.clearBtn);
+  set('vt-cal', s.vtCal); set('vt-list', s.vtList);
+  set('export-title', view === 'week' ? s.exportTitleWeek : s.exportTitleMonth);
+  set('export-sub', view === 'week' ? s.exportSubWeek : s.exportSubMonth);
+  set('export-btn', s.exportBtn);
+  set('reimport-text', s.reimportText); set('reimport-btn', s.reimportBtn);
+  set('disclaimer', s.disclaimer);
+  document.getElementById('howto').innerHTML = s.howto.map(([h, b]) => `<div class="howto-step"><strong>${h}</strong><div>${Array.isArray(b) ? b.map(l => `<span class="howto-line">${l}</span>`).join('') : b}</div></div>`).join('');
+  document.getElementById('view-toggle').style.display = view === 'week' ? '' : 'none';
+  document.getElementById('vt-cal').classList.toggle('active', calView === 'calendar');
+  document.getElementById('vt-list').classList.toggle('active', calView === 'list');
+}
+function renderAll() {
+  renderStrings();
+  renderProgress();
+  renderCatalog();
+  if (view === 'month') renderMonthView();
+  else if (calView === 'calendar') renderWeekCalendar();
+  else renderWeekList();
+}
+renderAll();
+</script>
+</body>
+</html>
