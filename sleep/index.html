@@ -173,8 +173,8 @@ h1 { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.3; mar
   </div>
   <div class="chart-wrap"><canvas id="radarChart" width="260" height="260"></canvas></div>
   <div class="dim-grid" id="dimGrid"></div>
-  <div id="levers"></div>
   <div class="retake-note" id="retakeNote"></div>
+  <div id="levers"></div>
   <div class="next-step" id="nextStep"></div>
   <button class="reset-btn" id="reset-btn" onclick="resetAll()"></button>
   <p class="disclaimer" id="disclaimer"></p>
@@ -220,7 +220,7 @@ const strings = {
     subscribeText: 'Every week, Swiss Army Mum turns the research behind its four pillars, Body (sleep, food, movement, brain), Mind (purpose, stress, connection), Glow (skin, hair, hormones) and Flow (systems, routines, habits), into one thing you can actually do. For busy women 35+.',
     subscribeBtn: 'Subscribe free',
     retakeBtn: 'Retake the assessment',
-    retakeNote: (date, total) => `<strong>Score on ${date}: ${total}/24.</strong> Note this somewhere. Come back after 7 days of applying the lever above and retake to see if the needle moved.`,
+    retakeNote: (date, total) => `<strong>Score on ${date}: ${total}/24.</strong> Note this somewhere. Come back after 7 days of applying the lever below and retake to see if the needle moved.`,
     disclaimer: `Adapted from sleep health research frameworks.<br><br>
 <span style="display:block;margin-bottom:4px">Buysse DJ. Sleep health: can we define it? Does it matter? <a href="https://doi.org/10.5665/sleep.3298" target="_blank" class="sleep-link"><em>Sleep.</em> 2014;37(1):9–17</a>.</span>
 <span style="display:block;margin-bottom:8px">University of Pittsburgh Sleep Medicine Institute. <a href="https://sleep.pitt.edu/sites/default/files/assets/Ru-SATED%20v4.0_2024_06_04.pdf" target="_blank" class="sleep-link">Ru-SATED v4.0</a>, 2024. © University of Pittsburgh. All rights reserved.</span>
