@@ -90,6 +90,12 @@ h1 { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.3; mar
 .lever-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; line-height: 1.4; }
 .lever-text { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 400; }
 .sleep-link { color: var(--body-green); text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
+.next-step { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--cream-dark); display: flex; flex-direction: column; gap: 10px; }
+.subscribe-card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 1.25rem; }
+.subscribe-title { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 6px; }
+.subscribe-text { font-size: 13px; color: var(--ink-mid); line-height: 1.65; margin-bottom: 1rem; }
+.subscribe-btn { display: block; text-align: center; background: var(--teal); color: white; text-decoration: none; padding: 13px; border-radius: var(--radius); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; transition: background 0.15s; }
+.subscribe-btn:hover { background: #26494d; }
 .retake-note { font-size: 12px; color: var(--ink-light); line-height: 1.6; margin-bottom: 1.25rem; margin-top: 1rem; padding: 10px 14px; background: var(--white); border-radius: var(--radius-sm); border: 1px solid var(--cream-dark); font-weight: 400; }
 .reset-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--cream-dark); border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: background 0.15s; }
 .reset-btn:hover { background: var(--white); }
@@ -169,6 +175,7 @@ h1 { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.3; mar
   <div class="dim-grid" id="dimGrid"></div>
   <div id="levers"></div>
   <div class="retake-note" id="retakeNote"></div>
+  <div class="next-step" id="nextStep"></div>
   <button class="reset-btn" id="reset-btn" onclick="resetAll()"></button>
   <p class="disclaimer" id="disclaimer"></p>
   <div class="footer">
@@ -179,6 +186,16 @@ h1 { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.3; mar
 </div>
 
 <script>
+/* =====================================================================
+   CONFIG: edit these links on GitHub. Nothing else needs to change.
+   ---------------------------------------------------------------------
+   SLEEP_POST_URL: the "Go deeper" link on the results screen.
+   SUBSCRIBE_URL:  the "Subscribe free" button (opens in a new tab).
+   ===================================================================== */
+const SLEEP_POST_URL = "https://www.swissarmymum.com/p/sleep";
+const SUBSCRIBE_URL  = "https://www.swissarmymum.com/subscribe?utm_source=sleep-tool&utm_medium=tool&utm_campaign=freebie";
+/* ======================== END OF CONFIG ============================== */
+
 const strings = {
   en: {
     badgeType: 'Self-assessment',
@@ -199,6 +216,9 @@ const strings = {
     goDeeperText: 'The SAM sleep post covers the mechanisms behind every dimension of sleep health, what actually matters, and what you can safely ignore.',
     goDeeperLink: 'Sleep: The Non-Negotiable Foundation →',
     lever80: 'Your 80/20 lever',
+    subscribeTitle: 'One science-backed lever a week. Free.',
+    subscribeText: 'Every week, Swiss Army Mum turns the research behind its four pillars, Body (sleep, food, movement, brain), Mind (purpose, stress, connection), Glow (skin, hair, hormones) and Flow (systems, routines, habits), into one thing you can actually do. For busy women 35+.',
+    subscribeBtn: 'Subscribe free',
     retakeBtn: 'Retake the assessment',
     retakeNote: (date, total) => `<strong>Score on ${date}: ${total}/24.</strong> Note this somewhere. Come back after 7 days of applying the lever above and retake to see if the needle moved.`,
     disclaimer: `Adapted from sleep health research frameworks.<br><br>
@@ -243,6 +263,9 @@ This is educational, not personal medical advice. Your biology, history, and con
     goDeeperText: 'El artículo SAM sobre el sueño explica los mecanismos de cada dimensión, qué es lo que de verdad importa y qué puedes ignorar sin problema.',
     goDeeperLink: 'El sueño: la base sobre la que se construye todo lo demás →',
     lever80: 'Tu palanca de Pareto',
+    subscribeTitle: 'Una palanca respaldada por la ciencia cada semana. Gratis.',
+    subscribeText: 'Cada semana, Swiss Army Mum convierte la investigación de sus cuatro pilares, Body (sueño, alimentación, movimiento, cerebro), Mind (propósito, estrés, conexión), Glow (piel, cabello, hormonas) y Flow (sistemas, rutinas, hábitos), en una sola cosa que de verdad puedes hacer. Para mujeres ocupadas de más de 35 años.',
+    subscribeBtn: 'Suscríbete gratis',
     retakeBtn: 'Repetir la evaluación',
     retakeNote: (date, total) => `<strong>Puntuación del ${date}: ${total}/24.</strong> Anótalo en algún sitio. Vuelve a hacer la evaluación tras 7 días aplicando el cambio de abajo y comprueba si la aguja se ha movido.`,
     disclaimer: `Adaptado de marcos de investigación sobre salud del sueño.<br><br>
@@ -270,7 +293,7 @@ Esta herramienta es educativa y no sustituye el consejo médico personalizado. T
   }
 };
 
-const sleepPostUrl = 'https://www.swissarmymum.com/p/sleep';
+const sleepPostUrl = SLEEP_POST_URL;
 let lang = 'en';
 let answers = new Array(6).fill(null);
 let current = 0;
@@ -390,6 +413,14 @@ function showResult() {
       <div class="lever-eyebrow">${s.goDeeper}</div>
       <div class="lever-title">${s.goDeeperTitle}</div>
       <div class="lever-text">${s.goDeeperText} <a href="${sleepPostUrl}" class="sleep-link" target="_blank">${s.goDeeperLink}</a></div>
+    </div>
+  `;
+
+  document.getElementById('nextStep').innerHTML = `
+    <div class="subscribe-card">
+      <div class="subscribe-title">${s.subscribeTitle}</div>
+      <div class="subscribe-text">${s.subscribeText}</div>
+      <a class="subscribe-btn" href="${SUBSCRIBE_URL}" target="_blank" rel="noopener">${s.subscribeBtn}</a>
     </div>
   `;
 
