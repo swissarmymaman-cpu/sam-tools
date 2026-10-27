@@ -473,22 +473,27 @@ function frac(itemId, monthly) {
   const count = list.filter(b => b.itemId === itemId).length;
   return { count, target: item.target, f: Math.min(1, count / item.target) };
 }
-function areaFrac(pillar, area) {
-  const items = ITEMS.filter(i => i.pillar === pillar && i.area === area);
-  return items.reduce((s, i) => s + frac(i.id).f, 0) / items.length;
-}
+// Progress = sessions placed / sessions targeted. Every session counts the
+// same. Extra sessions of one habit beyond its target don't make up for
+// another habit, so each item's count is capped at its own target.
 function areasOf(pillar) { return [...new Set(ITEMS.filter(i => i.pillar === pillar).map(i => i.area))]; }
-function pillarFrac(pillar) {
-  if (view === 'month') {
-    const items = MONTHLY_ITEMS.filter(i => i.pillar === pillar);
-    return items.reduce((s, i) => s + frac(i.id, true).f, 0) / items.length;
-  }
-  const areas = areasOf(pillar);
-  return areas.reduce((s, a) => s + areaFrac(pillar, a), 0) / areas.length;
+function sessionTotals(pillars) {
+  const monthly = view === 'month';
+  const items = (monthly ? MONTHLY_ITEMS : ITEMS).filter(i => pillars.includes(i.pillar));
+  return items.reduce((t, i) => {
+    const fr = frac(i.id, monthly);
+    return { done: t.done + Math.min(fr.count, fr.target), target: t.target + fr.target };
+  }, { done: 0, target: 0 });
 }
+function pillarFrac(pillar) {
+  const t = sessionTotals([pillar]);
+  return t.target ? t.done / t.target : 0;
+}
+// Overall: each pillar in focus weighs the same (Body and Mind 50/50).
+// With only one pillar in focus, overall equals that pillar.
 function overallFrac() {
   const ps = Object.keys(activePillars).filter(p => activePillars[p]);
-  return ps.length ? ps.reduce((s, p) => s + pillarFrac(p), 0) / ps.length : 0;
+  return ps.length ? ps.reduce((sum, p) => sum + pillarFrac(p), 0) / ps.length : 0;
 }
 
 function tint(rgb, f) { return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${(0.12 + 0.88 * f).toFixed(3)})`; }
