@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Your Body Guide | Swiss Army Mum</title>
+<link rel="icon" type="image/png" href="https://app.swissarmymum.com/icons/logo-stamp.png">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal: #315E63;
+  --body-green: #025A5A;
+  --body-green-mid: #013D3D;
+  --body-green-light: #E0F2F1;
+  --peach: #F0C4A8;
+  --cream: #F7F4EF;
+  --cream-dark: #EDE8E0;
+  --ink: #1A1A18;
+  --ink-mid: #4A4A45;
+  --ink-light: #8A8A82;
+  --white: #ffffff;
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+a { color: var(--body-green); }
+
+.app-header { background: var(--teal); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
+.header-left { display: flex; flex-direction: column; gap: 1px; }
+.header-title { font-size: 13px; font-weight: 600; color: white; letter-spacing: 0.02em; line-height: 1.2; text-decoration: none; }
+.header-tagline { font-size: 9.5px; font-weight: 300; color: rgba(255,255,255,0.65); letter-spacing: 0.04em; line-height: 1.2; }
+.header-logo img { width: 34px; height: 34px; object-fit: contain; display: block; }
+
+.page { max-width: 680px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+.badges-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.badge { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; letter-spacing: 0.03em; }
+.badge-body { background: var(--body-green); color: white; }
+.badge-type { background: var(--cream-dark); color: var(--ink-mid); }
+
+h1 { font-size: 28px; font-weight: 700; line-height: 1.2; letter-spacing: -0.015em; margin-bottom: 0.75rem; color: var(--body-green-mid); }
+.lead { font-size: 15px; color: var(--ink-mid); line-height: 1.7; margin-bottom: 1.5rem; }
+
+/* download card */
+.download { background: var(--body-green); border-radius: var(--radius-lg); padding: 1.5rem; color: white; margin-bottom: 2.25rem; }
+.download-kicker { font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; color: var(--peach); margin-bottom: 0.4rem; }
+.download-title { font-size: 19px; font-weight: 600; line-height: 1.3; margin-bottom: 0.35rem; }
+.download-meta { font-size: 12.5px; color: rgba(255,255,255,0.75); margin-bottom: 1.1rem; }
+.btn { display: inline-flex; align-items: center; gap: 10px; background: var(--peach); color: var(--body-green-mid); font-family: inherit; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 22px; border-radius: 999px; transition: transform 0.12s, box-shadow 0.12s; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.download-note { font-size: 12.5px; line-height: 1.6; color: rgba(255,255,255,0.85); margin-top: 1rem; }
+
+h2 { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--teal); text-transform: uppercase; margin-bottom: 0.9rem; }
+section { margin-bottom: 2.25rem; }
+
+.steps { list-style: none; display: grid; gap: 10px; }
+.step { display: grid; grid-template-columns: 40px 1fr; gap: 14px; background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 14px 16px; }
+.step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--body-green-light); color: var(--body-green); font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+.step h3 { font-size: 14.5px; font-weight: 600; margin-bottom: 3px; line-height: 1.35; }
+.step p { font-size: 13.5px; color: var(--ink-mid); line-height: 1.6; }
+
+.ways { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.way { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 14px 16px; }
+.way h3 { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; color: var(--body-green-mid); }
+.way p { font-size: 13px; color: var(--ink-mid); line-height: 1.6; }
+
+.prose p { font-size: 14px; color: var(--ink-mid); line-height: 1.7; margin-bottom: 0.75rem; }
+.prose strong { color: var(--ink); font-weight: 600; }
+.btn-outline { display: inline-block; font-size: 13.5px; font-weight: 600; color: var(--teal); border: 1.5px solid var(--teal); border-radius: 999px; padding: 10px 18px; text-decoration: none; transition: background 0.15s, color 0.15s; }
+.btn-outline:hover { background: var(--teal); color: white; }
+
+.sign { font-size: 14px; color: var(--ink-mid); line-height: 1.7; border-top: 1px solid var(--cream-dark); padding-top: 1.5rem; }
+.sign .name { display: block; margin-top: 0.4rem; font-weight: 700; font-style: italic; color: var(--body-green); font-size: 15px; }
+
+.disclaimer { font-size: 10.5px; color: var(--ink-light); text-align: center; margin-top: 2.5rem; line-height: 1.7; }
+.footer { text-align: center; margin-top: 1rem; }
+.footer a { font-size: 12px; font-weight: 500; color: var(--teal); text-decoration: none; }
+
+@media (max-width: 560px) {
+  h1 { font-size: 24px; }
+  .ways { grid-template-columns: 1fr; }
+  .btn { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <a class="header-title" href="https://www.swissarmymum.com" target="_blank" rel="noopener">Swiss Army Mum</a>
+    <div class="header-tagline">Not every tool. Just the right ones.</div>
+  </div>
+  <div class="header-logo"><img src="data:image/png;base64,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" alt="Swiss Army Mum logo"></div>
+</div>
+
+<main class="page">
+
+  <div class="badges-row">
+    <span class="badge badge-body">Body</span>
+    <span class="badge badge-type">Guide · Version 1.0</span>
+  </div>
+
+  <h1>You're in. Here's your Body Guide.</h1>
+  <p class="lead">Thank you. Your receipt is on its way to your inbox. Download the guide now and save it somewhere you'll find it again: your phone, your desktop, or the printer tray.</p>
+
+  <div class="download">
+    <div class="download-kicker">YOUR DOWNLOAD</div>
+    <div class="download-title">The Body Guide, Version 1.0</div>
+    <div class="download-meta">PDF · 28 pages · A4 · screen, phone or print</div>
+    <a class="btn" href="SAM_Body_Guide_v1.0.pdf" download="SAM_Body_Guide_v1.0.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      Download the guide
+    </a>
+    <p class="download-note">Bookmark this page as well. The link keeps working, so you can grab a fresh copy on a new device.</p>
+  </div>
+
+  <section>
+    <h2>Start in ten minutes</h2>
+    <ol class="steps">
+      <li class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Read the Body brief on page 6</h3>
+          <p>One page. It's the map for everything else, so read it before anything else.</p>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Pick the area that's bothering you most</h3>
+          <p>Waking at 3 a.m.? Do the sleep check on page 9. Energy dips and cravings in the afternoon? Do the metabolic check on page 13. Each takes a few minutes.</p>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Choose one lever for this week</h3>
+          <p>Just one. Write it on a notes page and date it. Consistency beats perfection, and one lever pulled every day beats five you mean to start next month.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Two ways to use it</h2>
+    <div class="ways">
+      <div class="way">
+        <h3>On screen</h3>
+        <p>Open it in a PDF app such as Adobe Acrobat Reader (free). The page numbers on the cover jump to each brief, the tool links open in your browser, and you can type on the notes pages.</p>
+      </div>
+      <div class="way">
+        <h3>On paper</h3>
+        <p>Print it A4, double-sided, flipping on the long edge. Each section opens on a right-hand page. Scan the QR codes to open the tools on your phone.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="prose">
+    <h2>Good to know</h2>
+    <p><strong>The markers tracker</strong> opens as your own copy in Google Sheets. You'll need to be signed in to a Google account for that one.</p>
+    <p><strong>This is Version 1.0, and it's yours to keep.</strong> New tools come out in a post first, then land in the guide as a new version. Paid subscribers get every new version of every guide as part of their membership.</p>
+    <p>Not on the newsletter yet? It's free, and it's where new tools appear first.</p>
+    <p><a class="btn-outline" href="https://www.swissarmymum.com/subscribe" target="_blank" rel="noopener">Get the newsletter</a></p>
+  </section>
+
+  <div class="sign">
+    Download not working, or something missing? Reply to your receipt email and I'll sort it out.
+    <span class="name">Dr. Mica</span>
+  </div>
+
+  <p class="disclaimer">The Body Guide is for education and information only. It is not medical advice and does not replace your doctor.<br>© 2026 Swiss Army Mum. For your personal use. Please don't share the file or this page.</p>
+  <div class="footer"><a href="https://www.swissarmymum.com" target="_blank" rel="noopener">swissarmymum.com</a></div>
+
+</main>
+</body>
+</html>
