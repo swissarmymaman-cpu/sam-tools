@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM Lab: Fuel</title>
+<meta name="description" content="SAM Lab: is it what you add, or what you cut? Real data from three open-access papers on Mediterranean eating and ultra-processed food, turned into something you can play with.">
+<link rel="icon" type="image/png" href="https://app.swissarmymum.com/icons/logo-stamp.png">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#315E63;--green:#025A5A;--green-mid:#3D7A78;--green-light:#E0F2F1;--green-soft:#B9D9D3;--green-border:rgba(2,90,90,.28);
+  --blue:#00579B;--blue-mid:#3A78B0;--blue-light:#E4EEF7;--blue-border:rgba(0,87,155,.32);
+  --cream:#F7F4EF;--cream-dark:#EDE8E0;--ink:#1A1A18;--ink-mid:#4A4A45;--ink-light:#8A8A82;--white:#fff;
+  --r:14px;--r-lg:22px;--shadow:0 1px 2px rgba(40,30,20,.05),0 10px 30px rgba(40,30,20,.07);
+}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--ink);font-size:16px;line-height:1.6;overflow-x:hidden}
+button{font-family:inherit}
+a{color:var(--green);text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.app-header{background:var(--teal);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;min-height:52px}
+.header-title{font-size:13px;font-weight:600;color:#fff;letter-spacing:.02em;line-height:1.2}
+.header-tagline{font-size:9.5px;font-weight:300;color:rgba(255,255,255,.75);letter-spacing:.04em}
+.header-logo img{width:34px;height:34px;object-fit:contain;display:block}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+/* hero: teal and blue at about 15% in the corners, cream in the middle */
+.hero{background:linear-gradient(135deg,rgba(2,90,90,.15) 0%,rgba(247,244,239,0) 45%,rgba(247,244,239,0) 55%,rgba(0,87,155,.15) 100%),var(--cream);padding:28px 0 44px;border-bottom:1px solid var(--cream-dark)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:26px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.04em}
+.badge-pillar{background:var(--green);color:#fff}
+.badge-type{background:var(--white);color:var(--green);border:1px solid var(--green-border)}
+.badge-lang{margin-left:auto;background:transparent;color:var(--green);border:1px solid var(--green);cursor:pointer;min-height:40px;min-width:46px;justify-content:center;border-radius:22px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+h1{font-size:clamp(2.1rem,6.5vw,3.6rem);font-weight:800;line-height:1.08;letter-spacing:-.02em;max-width:17ch}
+h1 .g{color:var(--green)}
+h1 .b{color:var(--blue)}
+.hero .lead{font-size:clamp(1rem,2.3vw,1.15rem);color:var(--ink-mid);max-width:58ch;margin-top:18px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+.stat{background:var(--white);border:1px solid var(--cream-dark);border-top:5px solid var(--c,var(--green));border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+.stat.cut{border-top-style:dashed}
+.stat .big{font-size:clamp(1.9rem,5.5vw,2.8rem);font-weight:800;line-height:1;color:var(--c,var(--green));letter-spacing:-.02em}
+.stat .big small{font-size:.45em;font-weight:700;letter-spacing:0}
+.stat .lbl{font-size:13px;font-weight:500;color:var(--ink-mid);margin-top:8px;line-height:1.45}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.cta{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:999px;font-weight:700;font-size:14px;text-decoration:none}
+.cta.primary{background:var(--green);color:#fff}
+.cta.ghost{border:1.5px solid var(--green);color:var(--green);background:var(--white)}
+/* papers strip */
+.papers{margin-top:30px}
+.papers-title{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.papers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.paper{background:rgba(255,255,255,.75);border:1px solid var(--cream-dark);border-radius:var(--r);padding:12px 14px;text-decoration:none;color:var(--ink);display:block}
+.paper:hover{background:#fff}
+.paper .j{font-size:11px;font-weight:700;color:var(--green);letter-spacing:.04em;text-transform:uppercase}
+.paper.cut .j{color:var(--blue)}
+.paper .w{font-size:13px;font-weight:600;line-height:1.35;margin-top:3px}
+.paper .n{font-size:12px;color:var(--ink-mid);margin-top:4px;line-height:1.4}
+.paper .oa{display:inline-block;margin-top:8px;font-size:10.5px;font-weight:700;color:var(--green);background:var(--green-light);border-radius:10px;padding:2px 8px}
+@media(max-width:700px){.stats,.papers-grid{grid-template-columns:1fr}.stats{gap:10px}}
+/* steps */
+section.step{padding:56px 0 6px}
+.stepno{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;margin-bottom:12px}
+.stepno.b{background:var(--white);color:var(--blue);border:3px solid var(--blue)}
+h2{font-size:clamp(1.45rem,4vw,2.05rem);font-weight:800;line-height:1.15;letter-spacing:-.01em;margin-bottom:10px}
+.lead{font-size:15.5px;color:var(--ink-mid);max-width:62ch}
+.def{font-size:14px;color:var(--ink-mid);max-width:66ch;margin-top:10px}
+.def b{color:var(--ink)}
+.panel{background:var(--white);border:1px solid var(--cream-dark);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:22px;margin-top:20px}
+@media(max-width:600px){.panel{padding:16px}}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.ctl-lbl{font-size:12.5px;font-weight:700;color:var(--ink-mid);margin-right:4px}
+.chip{min-height:42px;padding:0 16px;border-radius:999px;border:1.5px solid var(--green-border);background:var(--white);color:var(--green);font-size:13px;font-weight:600;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.chip.blu{border:1.5px dashed var(--blue-border);color:var(--blue)}
+.chip.blu[aria-pressed="true"]{background:var(--blue);border:1.5px solid var(--blue);color:#fff}
+.chip.seg{border-radius:12px;font-size:12.5px}
+.scoreline{font-size:13px;color:var(--ink-mid);margin:-2px 0 14px;max-width:70ch}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart svg text,.forest svg text{font-family:'Montserrat',sans-serif}
+/* step 1 forest: one button per published row */
+.forest{display:flex;flex-direction:column;gap:3px;margin-top:4px;position:relative}
+.refline{position:absolute;width:1.5px;background:#8A8A82;pointer-events:none;z-index:1}
+.callout:empty{display:none}
+.frow{--rowbg:var(--white)}.frow[aria-pressed="true"]{--rowbg:var(--green-light)}
+.frow .fl,.frow .fv{position:relative;z-index:2}
+.frow .fl b,.frow .fl span{display:table;background:var(--rowbg);padding-right:3px}
+.frow .fv{justify-self:end;background:var(--rowbg)}
+.frow,.faxis{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr) 116px;gap:2px 12px;align-items:center}
+.frow{width:100%;text-align:left;background:var(--white);border:1.5px solid transparent;border-radius:12px;padding:5px 8px;cursor:pointer;color:var(--ink);font-size:13px}
+.frow:hover{border-color:var(--green-border)}
+.frow[aria-pressed="true"]{border-color:var(--green);background:var(--green-light)}
+.faxis{padding:0 9.5px}
+.fl b{display:block;font-size:13px;font-weight:700;line-height:1.3}
+.fl span{display:block;font-size:11.5px;color:var(--ink-mid);line-height:1.35}
+.fv{font-size:13px;font-weight:800;color:var(--green);text-align:right;line-height:1.3}
+.ft{display:block;width:100%;height:auto;overflow:visible}
+@media(max-width:600px){
+  .frow,.faxis{grid-template-columns:minmax(0,1fr) auto}
+  .frow .fl,.faxis .fl{grid-row:1;grid-column:1}
+  .frow .fv,.faxis .fv{grid-row:1;grid-column:2}
+  .frow .ft,.faxis .ft{grid-row:2;grid-column:1/-1}
+  .faxis .fl,.faxis .fv{display:none}
+  .faxis .ft{grid-row:1}
+}
+.result{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;background:var(--green-light);border-radius:var(--r);padding:14px 16px;margin-top:12px}
+.result.blu{background:var(--blue-light);border:1.5px dashed var(--blue-border)}
+.result .big{font-size:2rem;font-weight:800;line-height:1;color:var(--green)}
+.result.blu .big{color:var(--blue)}
+.result .txt{font-size:14.5px;font-weight:600;line-height:1.45;flex:1;min-width:200px}
+.result .txt small{display:block;font-size:12.5px;font-weight:500;color:var(--ink-mid);margin-top:3px}
+.readout{font-size:14px;line-height:1.5;margin-top:12px;padding:12px 14px;border:1.5px dashed var(--blue);border-radius:var(--r);color:var(--ink)}
+.readout b{color:var(--blue)}
+.callout{font-size:14.5px;line-height:1.6;margin-top:14px;padding-left:14px;border-left:4px solid var(--green)}
+.callout.blu{border-left:4px dashed var(--blue)}
+.src{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:11.5px;font-weight:600;color:var(--ink-mid);background:var(--cream);border:1px solid var(--cream-dark);border-radius:999px;padding:4px 12px}
+.src::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green)}
+.src.blu::before{background:transparent;border:2px solid var(--blue);width:6px;height:6px}
+/* why bars (Ahmad mediators) */
+.why{margin-top:20px;padding-top:16px;border-top:1px solid var(--cream-dark)}
+.why h3{font-size:15px;font-weight:800;margin-bottom:2px}
+.why p{font-size:13px;color:var(--ink-mid);margin-bottom:12px}
+.bars{list-style:none;display:flex;flex-direction:column;gap:12px}
+.bar-row{display:grid;grid-template-columns:1fr auto;gap:4px 12px}
+.bar-label{font-size:14px;font-weight:600}
+.bar-label small{display:block;font-size:12px;font-weight:400;color:var(--ink-mid);line-height:1.4;margin-top:1px}
+.why .eg{font-size:13.5px;color:var(--ink);background:var(--green-light);border-radius:10px;padding:10px 12px;margin:10px 0 4px}
+.bar-val{font-size:14px;font-weight:800;color:var(--green)}
+.bar-track{grid-column:1/-1;height:16px;background:var(--cream);border:1px solid var(--cream-dark);border-radius:8px;position:relative;overflow:hidden}
+.bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--green-mid);border-radius:8px 0 0 8px}
+.overlap{font-size:13.5px;font-weight:800;color:var(--green);margin-top:12px}
+.punch{font-size:clamp(1.15rem,3vw,1.4rem);font-weight:800;line-height:1.35;margin-top:22px;color:var(--green)}
+/* your plate */
+.q{font-size:15px;font-weight:700;margin-bottom:8px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px}
+@media(max-width:480px){.opts{grid-template-columns:1fr}}
+.opt{min-height:46px;border:1.5px solid var(--green-border);background:var(--white);color:var(--green);border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;padding:6px 12px;line-height:1.3}
+.opt[aria-pressed="true"]{background:var(--green);color:#fff;border-color:var(--green)}
+.opts.blu .opt{border:1.5px dashed var(--blue-border);color:var(--blue)}
+.opts.blu .opt[aria-pressed="true"]{background:var(--blue);border:1.5px solid var(--blue);color:#fff}
+.mine{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+@media(max-width:760px){.mine{grid-template-columns:1fr}}
+.mine .result{margin-top:0;display:block}
+.mine .eb{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.mine .blu .eb{color:var(--blue)}
+.mine .main{font-size:16px;font-weight:700;line-height:1.35}
+.mine .main.wait{font-size:14px;font-weight:500;color:var(--ink-mid)}
+.mine .sub{font-size:12.5px;color:var(--ink-mid);margin-top:4px}
+.note{font-size:13px;font-weight:600;color:var(--ink);margin-top:12px}
+.next{border:2px solid var(--green);border-radius:var(--r-lg);padding:18px 20px;margin-top:18px;background:var(--white)}
+.next .eb{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green)}
+.next h3{font-size:18px;font-weight:800;line-height:1.35;margin:4px 0 6px}
+.next p{font-size:14px;color:var(--ink-mid)}
+.links{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:16px}
+.links a{font-size:14px;font-weight:700;min-height:40px;display:inline-flex;align-items:center}
+.sub-card{background:var(--white);border:1px solid var(--cream-dark);border-radius:var(--r-lg);padding:22px;margin-top:40px;box-shadow:var(--shadow)}
+.sub-title{font-size:18px;font-weight:800;line-height:1.35;margin-bottom:6px}
+.sub-text{font-size:14px;color:var(--ink-mid);margin-bottom:16px;max-width:60ch}
+.sub-btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 28px;background:var(--teal);color:#fff;text-decoration:none;border-radius:var(--r);font-size:15px;font-weight:700}
+details.more{margin-top:22px;background:var(--white);border:1px solid var(--cream-dark);border-radius:var(--r)}
+details.more>summary{cursor:pointer;list-style:none;min-height:52px;display:flex;align-items:center;gap:8px;padding:0 18px;font-size:14.5px;font-weight:700;color:var(--green)}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:'\25B8';transition:transform .15s}
+details.more[open]>summary::before{transform:rotate(90deg)}
+.more-body{padding:0 18px 18px}
+.more-body h3{font-size:13.5px;font-weight:800;margin:16px 0 4px}
+.more-body h4{font-size:12.5px;font-weight:800;margin:12px 0 2px}
+.more-body p{font-size:13px;color:var(--ink-mid);margin-bottom:8px;max-width:72ch}
+.more-body p b{color:var(--ink)}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;font-size:12px;margin:4px 0 8px;width:100%;min-width:560px}
+th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--cream-dark);vertical-align:top}
+th{color:var(--ink-mid);font-weight:600}
+footer{text-align:center;margin-top:28px;padding:20px 0 40px;border-top:1px solid var(--cream-dark)}
+footer a{font-size:13px;font-weight:600;text-decoration:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app-header">
+  <div><div class="header-title">Swiss Army Mum</div><div class="header-tagline">Not every tool. Just the right ones.</div></div>
+  <div class="header-logo"><img src="https://app.swissarmymum.com/icons/logo-stamp.png" alt="SAM logo" onerror="this.style.display='none'"></div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="badges">
+      <span class="badge badge-pillar">Body · <span data-t="area"></span></span>
+      <span class="badge badge-type">SAM Lab</span>
+      <button class="badge badge-lang" id="lang" type="button"></button>
+    </div>
+    <div class="eyebrow" data-t="eyebrow"></div>
+    <h1 data-t="h1"></h1>
+    <p class="lead" data-t="heroLead"></p>
+    <div class="stats">
+      <div class="stat"><div class="big" id="st1"></div><div class="lbl" data-t="st1"></div></div>
+      <div class="stat" style="--c:var(--green-mid)"><div class="big" id="st2"></div><div class="lbl" data-t="st2"></div></div>
+      <div class="stat cut" style="--c:var(--blue)"><div class="big" id="st3"></div><div class="lbl" data-t="st3"></div></div>
+    </div>
+    <div class="ctas"><a class="cta primary" href="#s1" data-t="ctaWalk"></a><a class="cta ghost" href="#s4" data-t="ctaMine"></a></div>
+    <div class="papers">
+      <div class="papers-title" data-t="papersTitle"></div>
+      <div class="papers-grid" id="papers"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="step" id="s1">
+    <div class="stepno">1</div>
+    <h2 data-t="s1H"></h2>
+    <p class="lead" data-t="s1Lead"></p>
+    <div class="panel">
+      <div class="controls" id="aChips" role="group"></div>
+      <div class="forest" id="c1" role="group"></div>
+      <div class="result" aria-live="polite"><div class="big" id="r1big"></div><div class="txt" id="r1txt"></div></div>
+      <p class="callout" id="c1note"></p>
+      <span class="src" data-t="src1"></span>
+    </div>
+  </section>
+
+  <section class="step" id="s2">
+    <div class="stepno">2</div>
+    <h2 data-t="s2H"></h2>
+    <p class="lead" data-t="s2Lead"></p>
+    <div class="panel">
+      <div class="controls" id="modelChips" role="group"></div>
+      <div class="chart" id="c2"></div>
+      <div class="result" aria-live="polite"><div class="big" id="r2big"></div><div class="txt" id="r2txt"></div></div>
+      <p class="callout" id="c2note"></p>
+      <div class="why">
+        <h3 data-t="whyH"></h3>
+        <p data-t="whyP"></p>
+        <ul class="bars" id="bars"></ul>
+        <p class="eg" data-t="whyEg"></p>
+        <p class="overlap" data-t="overlap"></p>
+      </div>
+      <span class="src" data-t="src2"></span>
+    </div>
+  </section>
+
+  <section class="step" id="s3">
+    <div class="stepno b">3</div>
+    <h2 data-t="s3H"></h2>
+    <p class="lead" data-t="s3Lead"></p>
+    <p class="def" data-t="s3Diff"></p>
+    <div class="panel">
+      <div class="controls" id="uChips" role="group"></div>
+      <div class="chart" id="c3"></div>
+      <div class="result blu" aria-live="polite"><div class="big" id="r3big"></div><div class="txt" id="r3txt"></div></div>
+      <p class="readout" id="readout"></p>
+      <p class="callout blu" id="c3note"></p>
+      <span class="src blu" data-t="src3"></span>
+    </div>
+  </section>
+
+  <section class="step" id="s4">
+    <div class="stepno">4</div>
+    <h2 data-t="s4H"></h2>
+    <p class="lead" data-t="s4Lead"></p>
+    <div class="panel">
+      <p class="q" id="q1" data-t="q1"></p>
+      <div class="opts" id="opts1" role="group" aria-labelledby="q1"></div>
+      <p class="q" id="q2" data-t="q2"></p>
+      <div class="opts blu" id="opts2" role="group" aria-labelledby="q2"></div>
+      <div class="mine" aria-live="polite">
+        <div class="result"><div class="eb" data-t="m1eb"></div><div class="main" id="m1"></div><div class="sub" id="m1s"></div></div>
+        <div class="result"><div class="eb" data-t="m2eb"></div><div class="main" id="m2"></div><div class="sub" id="m2s"></div></div>
+        <div class="result blu"><div class="eb" data-t="m3eb"></div><div class="main" id="m3"></div><div class="sub" id="m3s"></div></div>
+      </div>
+      <p class="note" data-t="mineNote"></p>
+      <div class="next" aria-live="polite"><div class="eb" data-t="nextEb"></div><h3 id="nextH"></h3><p id="nextP"></p></div>
+      <div class="links">
+        <a href="https://www.swissarmymum.com/p/gut-health-the-metabolic-ally-youre" target="_blank" rel="noopener" data-t="lnkTest"></a>
+        <a href="https://www.swissarmymum.com/p/stabilize-blood-sugar-metabolic-health" target="_blank" rel="noopener" data-t="lnkPost"></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="sub-card">
+    <div class="sub-title" data-t="subTitle"></div>
+    <div class="sub-text" data-t="subText"></div>
+    <a class="sub-btn" href="https://www.swissarmymum.com/subscribe?utm_source=lab-fuel&utm_medium=tool&utm_campaign=sam-lab" target="_blank" rel="noopener" data-t="subBtn"></a>
+  </div>
+
+  <details class="more">
+    <summary data-t="moreSum"></summary>
+    <div class="more-body" id="more"></div>
+  </details>
+</main>
+<footer><a href="https://www.swissarmymum.com" target="_blank" rel="noopener">swissarmymum.com</a></footer>
+
+<script>
+/* DATA: every number on this page, keyed by data-sheet id (_work/data-sheet.json), copied as printed.
+   a_  Galbete et al. 2018, European Journal of Epidemiology (umbrella review). Table 1 rows: relative risk, highest vs lowest
+       Mediterranean adherence; e = [value, lower, upper]; g = NutriGrade grade; by = meta-analysis first author and year.
+   p1_ Ahmad et al. 2018, JAMA Network Open (Women's Health Study). Hazard ratios vs low score (0 to 3).
+   p2_ Suksatan et al. 2022, Nutrients (ultra-processed food). Hazard ratios, highest vs lowest intake. */
+const DATA={
+  papers:{ /* citation blocks, data-sheet papers object */
+    a:{year:"2018",doi:"10.1007/s10654-018-0427-3"},  /* papers.a.citation */
+    p1:{year:"2018",doi:"10.1001/jamanetworkopen.2018.5708"},  /* papers.p1.citation */
+    p2:{year:"2022",doi:"10.3390/nu14010174"}  /* papers.p2.citation: Nutrients 2022;14(1):174 */
+  },
+  /* Galbete: heart and circulation (highest vs lowest, comparison stated in row or Results text) */
+  a_cvd_unspecified_rosato:{e:["0.81","0.74","0.88"],g:"Moderate",by:["Rosato","2017"]},  /* Galbete Table 1, journal p. 915 */
+  a_cvd_incidence_grosso:{e:["0.73","0.66","0.80"],g:"Moderate",by:["Grosso","2017"]},  /* Galbete Table 1, journal p. 916 */
+  a_chd_ami_rosato:{e:["0.74","0.66","0.83"],g:"Moderate",by:["Rosato","2017"]},  /* Galbete Table 1, journal p. 914 */
+  a_chd_incidence_grosso:{e:["0.72","0.60","0.86"],g:"Low",by:["Grosso","2017"]},  /* Galbete Table 1, journal p. 917 */
+  a_mi_incidence_grosso:{e:["0.67","0.54","0.83"],g:"Low",by:["Grosso","2017"]},  /* Galbete Table 1, journal p. 917 */
+  a_stroke_unspecified_rosato:{e:["0.77","0.67","0.90"],g:"Low",by:["Rosato","2017"]},  /* Galbete Table 1, journal p. 914 */
+  a_stroke_haemorrhagic_rosato:{e:["1.01","0.74","1.37"],g:"Low",by:["Rosato","2017"]},  /* Galbete Table 1, journal p. 915; null kept */
+  /* Galbete: type 2 diabetes */
+  a_t2d_jannasch:{e:["0.87","0.82","0.97"],g:"Low",by:["Jannasch","2017"]},  /* Galbete Table 1, journal p. 913 */
+  a_t2d_schwingshackl2015:{e:["0.83","0.74","0.92"],g:"Moderate",by:["Schwingshackl","2015"]},  /* Galbete Table 1, journal p. 913 */
+  a_t2d_koloverou:{e:["0.77","0.66","0.89"],g:"Low",by:["Koloverou","2014"]},  /* Galbete Table 1, journal p. 913 */
+  a_t2d_esposito:{e:["0.80","0.68","0.93"],g:"Low",by:["Esposito","2014"]},  /* Galbete Table 1, journal p. 914 */
+  /* Galbete: cancer deaths */
+  a_cancer_mortality_schwingshackl2017:{e:["0.86","0.81","0.91"],g:"Moderate",by:["Schwingshackl","2017"]},  /* Galbete Table 1, journal p. 921 */
+  a_cancer_mortality_bloomfield:{e:["0.86","0.82","0.91"],g:"Low",by:["Bloomfield","2016"]},  /* Galbete Table 1, journal p. 921 */
+  /* Galbete: memory */
+  a_ad_wu:{e:["0.60","0.48","0.77"],g:"Moderate",by:["Wu","2017"]},  /* Galbete Table 1, journal p. 922 */
+  a_mci_cao:{e:["0.69","0.57","0.84"],g:"Low",by:["Cao","2016"]},  /* Galbete Table 1, journal p. 922 */
+  a_dementia_wu:{e:["1.07","0.81","1.42"],g:"Low",by:["Wu","2017"]},  /* Galbete Table 1, journal p. 922; null kept */
+  /* Galbete: percentages the authors state in the text (Results para 1, journal p. 911-912) */
+  a_text_cvd_19pct:"approximately 19",  /* Galbete Results p. 911 */
+  a_text_cvd_27pct:"27",  /* Galbete Results p. 911-912 */
+  a_text_t2d_13pct:"13",  /* Galbete Results p. 911 */
+  a_text_t2d_23pct:"23",  /* Galbete Results p. 911 */
+  a_text_cancer_mortality_14pct:"14",  /* Galbete Results p. 912 */
+  a_text_mci_31pct:"up to 31",  /* Galbete Results p. 912 */
+  a_text_ad_40pct:"40",  /* Galbete Results p. 912 */
+
+  /* Ahmad: who and how long */
+  p1_n_analysed:"25994",  /* Ahmad Abstract; Methods, Study Population */
+  p1_age_eligibility:"45",  /* Ahmad Methods, Study Population (45 or older) */
+  p1_mean_age:"54.7",  /* Ahmad Abstract; Results, Baseline Characteristics */
+  p1_followup_max:"12",  /* Ahmad Abstract; Methods (primary analysis capped at 12 years) */
+  p1_t1_postmenopausal_low:"50.1",  /* Ahmad Table 1, low group */
+  p1_t1_postmenopausal_upper:"59.1",  /* Ahmad Table 1, upper group */
+  /* Ahmad: score bands, from the group ids p1_group_low_n / _mid_n / _upper_n (Methods, MED Score: 0-3, 4-5, 6-9) */
+  p1_score:{low:["0","3"],mid:["4","5"],upper:["6","9"]},
+  /* Ahmad: raw shares with a first CVD event, up to 12 years (Abstract; Results, Baseline Characteristics) */
+  p1_events_low_pct:"4.2", p1_events_mid_pct:"3.8", p1_events_upper_pct:"3.8",
+  /* Ahmad: hazard ratios vs low (0 to 3). Age, trial treatment and energy model: Abstract; Table 3 row 1 */
+  p1_cvd_middle_vs_low:["0.77","0.67","0.90"],
+  p1_cvd_upper_vs_low:["0.72","0.61","0.86"],
+  p1_rrr_middle:"23",  /* Ahmad Results, MED and Risk of CVD (stated %) */
+  p1_rrr_upper:"28",  /* Ahmad Results; Key Points ("up to 28%") */
+  /* Ahmad: basic model adds smoking, menopause, hormone use, exercise, parental MI history (Table 4, row "Basic model") */
+  p1_cvd_basic_middle_vs_low:["0.85","0.73","0.98"],
+  p1_cvd_basic_upper_vs_low:["0.85","0.71","1.01"],
+  /* Ahmad: mediator shares, % of the risk reduction explained, one set at a time (Abstract; Results, Proportion of Reduction) */
+  p1_mediator_inflammation:"29.2", p1_mediator_glucose:"27.9", p1_mediator_bmi:"27.3",
+  p1_mediator_bp:"26.6", p1_mediator_tradlipids:"26.0", p1_mediator_hdl:"24.0", p1_mediator_vldl:"20.8",
+  p1_mediator_ldl:"13.0", p1_mediator_bcaa:"13.6", p1_mediator_apolipo:"6.5", p1_mediator_smallmol:"5.8",
+  p1_mediator_combined_total:"27.3",  /* Ahmad Results, Proportion of Reduction para 1 (all sets in one model) */
+
+  /* Suksatan: overview (Abstract; Results 3.1) */
+  p2_n_studies:"7", p2_n_participants:"207,291",
+  /* Suksatan: highest vs lowest ultra-processed intake (Abstract; Results 3.2 para 1) */
+  p2_allcause_high_vs_low:["1.21","1.13","1.30"],
+  p2_cvd_high_vs_low:["1.50","1.37","1.63"],
+  p2_heart_high_vs_low:["1.66","1.50","1.85"],  /* fold table only */
+  p2_cancer_high_vs_low:["1.00","0.81","1.24"],
+  /* Suksatan: per 10% of daily calories (Abstract; Results 3.2 para 3); printed "OR" in text, "HR" in Figure 3 */
+  p2_allcause_per10pct:["1.15","1.09","1.21"],
+  p2_allcause_per10pct_pct:"15",  /* stated by the authors */
+  p2_per_step:"10",  /* the step behind p2_allcause_per10pct: "each 10% increase in UPF consumption in daily calorie intake" (Abstract; Results 3.2) */
+  /* Suksatan: study count behind 1.21, from the p2_allcause_high_vs_low population note: text says four, Figure 2A lists six */
+  p2_allcause_studies_text:"4", p2_allcause_studies_plot:"6"
+};
+const A_ROWS={
+  heart:["a_cvd_unspecified_rosato","a_cvd_incidence_grosso","a_chd_ami_rosato","a_chd_incidence_grosso","a_mi_incidence_grosso","a_stroke_unspecified_rosato","a_stroke_haemorrhagic_rosato"],
+  t2d:["a_t2d_jannasch","a_t2d_schwingshackl2015","a_t2d_koloverou","a_t2d_esposito"],
+  cancer:["a_cancer_mortality_schwingshackl2017","a_cancer_mortality_bloomfield"],
+  mem:["a_ad_wu","a_mci_cao","a_dementia_wu"]
+};
+const P2_ROWS={any:"p2_allcause_high_vs_low",cvd:"p2_cvd_high_vs_low",cancer:"p2_cancer_high_vs_low"};
+const MEDS=["p1_mediator_inflammation","p1_mediator_glucose","p1_mediator_bmi","p1_mediator_bp","p1_mediator_tradlipids","p1_mediator_hdl","p1_mediator_vldl","p1_mediator_ldl","p1_mediator_bcaa","p1_mediator_apolipo","p1_mediator_smallmol"];
+/* chart scales in hundredths of the ratio: axis frame only, never shown as numbers */
+const SC_A=[40,150], SC_P1=[55,112], SC_P2=[70,175];
+
+const hund=s=>{const[a,b="0"]=String(s).split(".");return parseInt(a,10)*100+parseInt((b+"00").slice(0,2),10)};
+function ph(e){ /* [v,lo,hi] -> plain-language direction, whole percent, from printed strings only */
+  if(!e||e.length<2) return {dir:"ref",p:0};
+  const v=hund(e[0]),lo=hund(e[1]),hi=hund(e[2]);
+  if(lo<=100&&hi>=100) return {dir:"same",p:Math.abs(v-100),a:lo-100,b:hi-100};
+  return v>100?{dir:"up",p:v-100,a:lo-100,b:hi-100}:{dir:"down",p:100-v,a:100-hi,b:100-lo};
+}
+const nm=s=>String(s).replace(/[^\d.]/g,""); /* "approximately 19" -> "19" */
+let lang="en";
+const st={a:"heart",aRow:{heart:0,t2d:0,cancer:0,mem:0},g:"upper",m:"life",u:"any",q1:null,q2:null};
+const NB=" ";
+const pc=n=>lang==="es"?n+NB+"%":n+"%";
+const dec=s=>lang==="es"?String(s).replace(".",","):String(s);
+const big=n=>lang==="es"?String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"."):String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",");
+const num=s=>big(String(s).replace(/[^\d]/g,""));
+const yr=k=>DATA.papers[k].year;
+const sc=k=>DATA.p1_score[k];
+
+const T={
+en:{
+  area:"Fuel",langBtn:"ES",langAria:"Ver esta página en español",
+  eyebrow:"SAM Lab · real data from three open-access papers",
+  h1:'Fuel: is it what you <span class="g">add</span>, or what you <span class="b">cut</span>?',
+  heroLead:"Big food studies look at what people eat most days, not at any single meal. Here you can explore what three of them found about two everyday habits: eating Mediterranean-style, and eating ultra-processed food. Real numbers, straight from the papers.",
+  st1:"less heart and circulation disease (heart attacks, strokes) in people who ate the most Mediterranean-style, compared with those who ate the least",
+  st2:"lower risk of a first heart attack, stroke or similar in women who ate more Mediterranean-style, with smoking, exercise and menopause taken into account",
+  st3:()=>`higher risk of dying early per extra ${pc(DATA.p2_per_step)} of daily calories from ultra-processed food`,
+  vs:"vs",
+  ctaWalk:"Walk me through it ↓", ctaMine:"Skip to my plate ↓",
+  papersTitle:"The papers behind this page",
+  papers:()=>[
+    ["European Journal of Epidemiology · "+yr("a"),"Galbete et al.","A study of the studies: published reviews of long-term studies, checked and graded"],
+    ["JAMA Network Open · "+yr("p1"),"Ahmad et al.",`${num(DATA.p1_n_analysed)} US women followed up to ${DATA.p1_followup_max} years, plus the blood markers and body measures that travelled with the lower risk`],
+    ["Nutrients · "+yr("p2"),"Suksatan et al.",`${num(DATA.p2_n_participants)} adults: more ultra-processed food, earlier deaths?`]
+  ],
+  oa:"Open access · CC BY",
+  noDiff:"comparison group", lower:"lower risk", higher:"higher risk", lessD:"less disease", moreD:"more disease",
+  vl:r=>r.dir==="same"?"no clear difference":r.dir==="up"?`${pc(r.p)} higher`:`${pc(r.p)} lower`,
+  s1H:"Eating more Mediterranean goes with less heart disease, diabetes and cancer death.",
+  s1Lead:"Researchers have pooled dozens of long-term studies into reviews. Each row below is one review. It compares the people who ate the most Mediterranean-style with those who ate the least: the comparison group, shown by the middle line. The dot is what the review found; the line around it is the range where the true answer probably sits. A dot left of the middle line means the most Mediterranean eaters got that disease less often. Pick a disease, then tap a row.",
+  aChips:[["heart","Heart"],["t2d","Diabetes"],["cancer","Cancer deaths"],["mem","Memory"]],
+  aGroup:"Results by review, most vs least Mediterranean eaters. Tap a row for its plausible range.",
+  grade:{Moderate:"moderate confidence",Low:"low confidence"},
+  aOut:{
+    a_cvd_unspecified_rosato:"Heart and circulation disease",
+    a_cvd_incidence_grosso:"Heart and circulation disease, new cases",
+    a_chd_ami_rosato:"Coronary disease and heart attack",
+    a_chd_incidence_grosso:"Coronary heart disease, new cases",
+    a_mi_incidence_grosso:"Heart attack, new cases",
+    a_stroke_unspecified_rosato:"Stroke",
+    a_stroke_haemorrhagic_rosato:"Bleeding stroke",
+    a_t2d_jannasch:"Type 2 diabetes",a_t2d_schwingshackl2015:"Type 2 diabetes",a_t2d_koloverou:"Type 2 diabetes",a_t2d_esposito:"Type 2 diabetes",
+    a_cancer_mortality_schwingshackl2017:"Cancer deaths",a_cancer_mortality_bloomfield:"Cancer deaths",
+    a_ad_wu:"Alzheimer's disease",a_mci_cao:"Mild memory and thinking problems",a_dementia_wu:"Dementia overall"
+  },
+  r1stated:{
+    heart:()=>[`${nm(DATA.a_text_cvd_19pct)}–${pc(DATA.a_text_cvd_27pct)}`,"less heart and circulation disease for the most Mediterranean eaters than for the least (authors' approximate summary)."],
+    t2d:()=>[`${DATA.a_text_t2d_13pct}–${pc(DATA.a_text_t2d_23pct)}`,"less type 2 diabetes for the most Mediterranean eaters (authors' summary)."],
+    cancer:()=>[pc(DATA.a_text_cancer_mortality_14pct),"lower risk of dying from cancer for the most Mediterranean eaters (authors' figure)."],
+    mem:()=>[pc(DATA.a_text_ad_40pct),`lower risk of Alzheimer's for the most Mediterranean eaters (authors' figure). Mild memory problems: up to ${pc(nm(DATA.a_text_mci_31pct))} lower.`]
+  },
+  r1row:(lab,by,r)=>r.dir==="same"?`${by} · ${lab}: plausible range from ${pc(-r.a)} lower to ${pc(r.b)} higher.`
+      :`${by} · ${lab}: plausible range ${r.a} to ${pc(r.b)} lower.`,
+  c1note:{heart:"Every row sits left of the line except bleeding strokes: no clear difference.",
+          t2d:"Every review points the same way; confidence low to moderate, never high.",
+          cancer:"Both reviews land almost together: fewer cancer deaths for the most Mediterranean eaters.",
+          mem:"Alzheimer's looks lower; dementia overall shows no clear difference. The studies are few."},
+  src1:()=>`Galbete et al. ${yr("a")}, European Journal of Epidemiology`,
+  s2H:"And for women? Same direction, smaller once lifestyle counts.",
+  s2Lead:()=>`${num(DATA.p1_n_analysed)} US women, followed for up to ${DATA.p1_followup_max} years, sorted into three groups by how Mediterranean their everyday eating was. The most Mediterranean ate plenty of vegetables, fruit, nuts, beans, whole grains and fish, chose olive-oil-type fats over saturated fats, and ate little red and processed meat. The least Mediterranean ate the other way round: they are the comparison group. Flip the switch to see what changes once smoking, exercise, menopause and family history are taken into account.`,
+  scoreLine:()=>`Score ${sc("low")[0]} to ${sc("upper")[1]}: points for eating more vegetables, fruit, nuts, whole grains, beans and fish than half the women did, a higher ratio of olive-oil-type to saturated fat than half the women, less red and processed meat, a little alcohol.`,
+  gChips:()=>[["mid",`Middle group (score ${sc("mid")[0]} to ${sc("mid")[1]})`],["upper",`Top group (${sc("upper")[0]} to ${sc("upper")[1]})`]],
+  gLabel:"", mLabel:"", gAria:"Group",aAria:"Condition",uAria:"Cause of death", mAria:"What the researchers counted",
+  mChips:[["life","Habits and health history counted"],["age","Before habits and health history"]],
+  p1Rows:()=>[["Least Mediterranean","the comparison group"],["Middle group",""],["Most Mediterranean",""]],
+  cmp:"comparison",
+  c2aria:(m,rm,ru)=>`Women's risk of a first heart attack, stroke or similar, compared with the least Mediterranean group, ${m==="life"?"with habits and health history counted":"before habits and health history are counted"}. Middle group: ${rm}. Most Mediterranean group: ${ru}.`,
+  rng:r=>r.dir==="same"?`from ${pc(-r.a)} lower to ${pc(r.b)} higher, so it can't rule out no difference`:`${r.a} to ${pc(r.b)} lower`,
+  r2:(m,rm,ru,sm,su)=>{
+    const l=T.en;
+    if(m==="age") return [`${sm}–${pc(su)}`,`<b>lower risk for the middle and the most Mediterranean groups than the least, before habits and health history are counted.</b><small>Plausible range: middle group ${l.rng(rm)}; most Mediterranean ${l.rng(ru)}.</small>`];
+    return [rm.p===ru.p?pc(rm.p):`${rm.p}–${pc(ru.p)}`,`<b>lower risk for both the middle and the most Mediterranean groups than the least, once habits and health history are counted.</b><small>Plausible range: middle group ${l.rng(rm)}; most Mediterranean ${l.rng(ru)}.</small>`];
+  },
+  c2note:{life:"With habits and health history counted, the gap shrinks.",
+          age:"The headline figure, before habits and health history are counted."},
+  whyH:"Why might it work?",
+  whyP:"At the start of the study, every woman gave a blood sample and was weighed. Later, the researchers asked: how much of the most Mediterranean group's lower heart risk can be traced back to differences in these measurements? Each bar is that share.",
+  medsSub:{p1_mediator_inflammation:"Blood markers of the body's low-level, long-running \"alarm\" state, such as CRP",p1_mediator_glucose:"How well the body handles sugar: long-term blood sugar (HbA1c), insulin resistance, diabetes",p1_mediator_bmi:"Weight relative to height"},
+  meds:{p1_mediator_inflammation:"Inflammation",p1_mediator_glucose:"Blood sugar and insulin",p1_mediator_bmi:"Body weight (BMI)",
+        p1_mediator_bp:"Blood pressure",p1_mediator_tradlipids:"Standard cholesterol tests",p1_mediator_hdl:"HDL particles",p1_mediator_vldl:"VLDL particles",
+        p1_mediator_ldl:"LDL particles",p1_mediator_bcaa:"Branched-chain amino acids",p1_mediator_apolipo:"Apolipoproteins",p1_mediator_smallmol:"Other small molecules"},
+  whyEg:()=>`<b>How to read it:</b> about ${pc(Math.round(parseFloat(DATA.p1_mediator_inflammation)))} of the lower heart risk went together with differences in inflammation. It doesn't mean these women had ${pc(Math.round(parseFloat(DATA.p1_mediator_inflammation)))} less inflammation.`,
+  overlap:"The three overlap (they tend to move together), so the bars don't add up. And a big part of the lower risk stays unexplained.",
+  src2:()=>`Ahmad et al. ${yr("p1")}, JAMA Network Open`,
+  s3H:"More ultra-processed food goes with a higher risk of dying early.",
+  s3Lead:()=>`This review pooled ${DATA.p2_n_studies} long-term studies, ${num(DATA.p2_n_participants)} adults in all. Each row compares the people who ate the most ultra-processed food with those who ate the least: the comparison group, shown by the middle line. A dot right of the line means a higher risk of dying during the study. Pick a cause of death.`,
+  s3Diff:"<b>What counts as ultra-processed?</b> Food that is ready to eat, cheap, tasty, high in calories and attractively packaged, made mostly from food extracts and additives. Think packaged snacks, sugary drinks and many ready meals.",
+  uChips:[["any","Any cause"],["cvd","Heart and circulation"],["cancer","Cancer"]],
+  p2Rows:{any:"Any cause",cvd:"Heart and circulation",cancer:"Cancer"},
+  c3aria:(a,c,k)=>`Risk of dying, people eating the most vs the least ultra-processed food. Any cause: ${a}. Heart and circulation: ${c}. Cancer: ${k}.`,
+  r3:(u,r)=>{
+    const what={any:"dying from any cause",cvd:"dying from heart and circulation disease",cancer:"dying from cancer"}[u];
+    if(r.dir==="same") return ["≈",`<b>No clear difference in the risk of ${what}.</b><small>Plausible range: from ${pc(-r.a)} lower to ${pc(r.b)} higher.</small>`];
+    return [pc(r.p),`<b>higher risk of ${what} for the people eating the most ultra-processed food, compared with those eating the least.</b><small>Plausible range: ${r.a} to ${pc(r.b)} higher.</small>`];
+  },
+  readout:r=>`<b>Every extra ${pc(DATA.p2_per_step)} of daily calories from ultra-processed food:</b> about ${pc(DATA.p2_allcause_per10pct_pct)} higher risk of dying from any cause (plausible range ${r.a} to ${pc(r.b)} higher).`,
+  c3note:{any:"",
+          cvd:"The clearest signal: heart and circulation deaths.",
+          cancer:"No clear difference for cancer deaths, so the link isn't the same for every cause."},
+  src3:()=>`Suksatan et al. ${yr("p2")}, Nutrients`,
+  s4H:"Where does your plate land?",
+  s4Lead:"Answer two quick questions about a usual week. For each study, you'll see which group eats most like you and how that group did. Then one thing to try this week.",
+  q1:"How often do you eat vegetables, beans or lentils?",
+  q2:"How often do you eat ready-to-eat packaged food?",
+  o1:[["most","Most days"],["some","Some days"],["rarely","Rarely"]],
+  o2:[["rarely","Rarely"],["some","Some days"],["most","Most days"]],
+  m1eb:()=>`Galbete ${yr("a")} · many studies`, m2eb:()=>`Ahmad ${yr("p1")} · women`, m3eb:()=>`Suksatan ${yr("p2")} · ultra-processed`,
+  wait1:"Tap an answer above.", wait2:"Tap an answer above.",
+  m1:q=>{const s=`${nm(DATA.a_text_cvd_19pct)} to ${pc(DATA.a_text_cvd_27pct)}`;return {
+    most:["You eat like the most Mediterranean eaters.",`In the reviews, people like you had about ${s} less heart and circulation disease than the least Mediterranean eaters.`],
+    some:["You're somewhere in between.","The reviews only compare the most and the least Mediterranean eaters, so there's no figure for the middle."],
+    rarely:["You eat like the least Mediterranean eaters: the comparison group.",`In the reviews, the most Mediterranean eaters had about ${s} less heart and circulation disease than people like you.`]}[q]},
+  m2:(q,rm,ru)=>({
+    most:["You eat like the most Mediterranean group.",`Women like you had ${pc(ru.p)} lower risk than the least Mediterranean group, with habits and health history counted. But the study can't rule out no difference.`],
+    some:["You eat like the middle group.",`Women like you had ${pc(rm.p)} lower risk than the least Mediterranean group, with habits and health history counted (plausible range ${rm.a} to ${pc(rm.b)} lower).`],
+    rarely:["You eat like the least Mediterranean group: the comparison group.",`With habits and health history counted, the middle and most Mediterranean groups had ${pc(rm.p)} lower risk than women like you.`]})[q],
+  m3:(q,r)=>({
+    most:["You eat like the people eating the most.",`People like you had a ${pc(r.p)} higher risk of dying from any cause than the people eating the least.`],
+    some:["You're somewhere in between.","The review only compares the most and the least, so there's no figure for the middle."],
+    rarely:["You eat like the people eating the least: the comparison group.",`The people eating the most had a ${pc(r.p)} higher risk of dying from any cause than people like you.`]})[q],
+  mineNote:"These compare groups of people. They are not your personal chance.",
+  nextEb:"Your next step",
+  next:(a,b)=>{
+    if(a===null||b===null) return ["Answer both questions.",""];
+    if(a!=="most") return ["This week, add one plant anchor (beans, lentils, nuts or a big salad) to your main meal on five days. Add before you cut.","The direction the Mediterranean studies point. A sensible bet, not a proven fix."];
+    if(b!=="rarely") return ["Swap one ready-made item you eat most days for a plain version.","The ultra-processed review points at the ready-made side. A sensible bet, not a proven fix."];
+    return ["Keep it up: this week, cook one meal from scratch that you'd usually buy ready-made.","Want the why? The posts below explain how food steadies your blood sugar and feeds your gut. A sensible bet, not a guarantee."];
+  },
+  lnkTest:"Read: the gut side of the story →", lnkPost:"Read: how to steady your blood sugar →",
+  subTitle:"One science-backed lever a week. Free.",
+  subText:"Every week, Swiss Army Mum turns the research on sleep, food, movement, the brain and the mind into one thing you can actually do. For busy women 35+.",
+  subBtn:"Subscribe free",
+  moreSum:"How sure are we? Sources and details",
+  more:()=>{
+    const ru=ph(DATA.p2_allcause_high_vs_low);
+    return `<h3>How sure are we?</h3>
+<p><b>Links, not proof.</b> All three papers rest on observational studies: people's eating was recorded, then they were followed for years. They show which groups did better, not that changing your plate changes your risk.</p>
+<p><b>Relative vs absolute.</b> Percentages such as "${pc(ru.p)} higher" compare groups. The ${dec(DATA.p1_events_low_pct)} and ${dec(DATA.p1_events_upper_pct)} in 100 are raw shares of women with a first heart attack, stroke or similar, before any adjustment.</p>
+<p><b>Ahmad's result depends on the model.</b> Counting only age, calories and the trial pills the women were given (the study ran inside an aspirin and vitamin E trial), the top group had ${pc(DATA.p1_rrr_upper)} lower risk. Adding smoking, menopause, hormone use, exercise and family history, the top group's plausible range reaches no difference. The "why" factors were each tested on their own and overlap; all of them together in one model accounted for ${pc(dec(DATA.p1_mediator_combined_total))}, as printed, which is less than inflammation alone. The authors say a sizeable part remains unexplained.</p>
+<p><b>Who was studied.</b> Ahmad: ${num(DATA.p1_n_analysed)} US female health professionals aged ${DATA.p1_age_eligibility} or older and free of heart disease at the start, average age ${dec(DATA.p1_mean_age)}, with ${pc(dec(DATA.p1_t1_postmenopausal_low))} to ${pc(dec(DATA.p1_t1_postmenopausal_upper))} past menopause depending on diet group. The authors note that health professionals may behave differently from men or higher-risk women. Galbete and Suksatan report no results by sex.</p>
+<p><b>Galbete's grades.</b> The authors rate their confidence low or moderate for every outcome, none high. For many of the reviews, the range where a new study's result would likely fall crosses no difference. The review has no "dying from any cause" outcome. Step 1 shows only rows the paper labels as most vs least comparisons; per-2-point rows, rows with an unlabelled comparison and the re-analyses by score type are left out. Moderate alcohol earns a point in the two most used Mediterranean scores, and in Ahmad's; that is not advice to drink.</p>
+<p><b>Suksatan's loose ends.</b> The text says ${DATA.p2_allcause_studies_text} studies sit behind the "any cause" figure; the forest plot shows ${DATA.p2_allcause_studies_plot}. The per-${pc(DATA.p2_per_step)} figure carries two different technical labels in the paper (see the table below). The curve by amount is published only as a picture, so this page gives no risk for any specific intake. The text and figure also disagree on whether heart and circulation deaths rise with each extra ${pc(DATA.p2_per_step)}.</p>
+<p><b>Two exposures, never one scale.</b> Steps 1 and 2 measure how Mediterranean people ate; step 3 measures how much ultra-processed food they ate. That's why cancer deaths can look lower in one and unchanged in the other without the papers contradicting each other.</p>
+${numbersTable()}
+<h3>Sources and licences</h3>
+<p>Galbete C, Schwingshackl L, Schwedhelm C, Boeing H, Schulze MB. Evaluating Mediterranean diet and risk of chronic disease in cohort studies: an umbrella review of meta-analyses. <i>European Journal of Epidemiology</i> ${yr("a")}. <a href="https://doi.org/${DATA.papers.a.doi}" target="_blank" rel="noopener">doi:${DATA.papers.a.doi}</a>. Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. What we changed: selected published estimates re-presented as interactive charts and plain-language text; no values altered.</p>
+<p>Ahmad S, Moorthy MV, Demler OV, Hu FB, Ridker PM, Chasman DI, Mora S. Assessment of Risk Factors and Biomarkers Associated With Risk of Cardiovascular Disease Among Women Consuming a Mediterranean Diet. <i>JAMA Network Open</i> ${yr("p1")}. <a href="https://doi.org/${DATA.papers.p1.doi}" target="_blank" rel="noopener">doi:${DATA.papers.p1.doi}</a>. Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. What we changed: selected published estimates re-presented as interactive charts and plain-language text; no values altered.</p>
+<p>Suksatan W, Moradi S, Naeini F, Bagheri R, Mohammadi H, Talebi S, Mehrabani S, Hojjati Kermani MA, Suzuki K. Ultra-Processed Food Consumption and Adult Mortality Risk: A Systematic Review and Dose-Response Meta-Analysis of ${DATA.p2_n_participants} Participants. <i>Nutrients</i> ${yr("p2")}. <a href="https://doi.org/${DATA.papers.p2.doi}" target="_blank" rel="noopener">doi:${DATA.papers.p2.doi}</a>. Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. What we changed: selected published estimates re-presented as interactive charts and plain-language text; no values altered.</p>
+<p>An independent explainer, not produced or endorsed by the authors or the journals.</p>
+<p>This is educational, not personal medical advice. Your biology, history, and context matter. Work with a qualified healthcare professional.</p>`;},
+  tblH:"See the numbers",
+  tblCols:["Source","Outcome or group","Measure and comparison","Value","95% CI","Model or note"],
+  tA:"RR, highest vs lowest adherence", tGrade:g=>`NutriGrade: ${g}`,
+  tP1:()=>`HR vs score ${sc("low")[0]} to ${sc("low")[1]}`, tP1age:"Age, trial treatment, energy", tP1life:"Basic model: plus smoking, menopause, hormone use, exercise, parental heart attack",
+  tP1ev:"Raw share with a first CVD event, %", tP1evN:()=>`Up to ${DATA.p1_followup_max}-year follow-up, unadjusted`,
+  tP1med:"Share of risk reduction accounted for, %", tP1medN:"Top group, basic model; one set at a time; overlapping", tP1comb:"All sets combined", tP1combN:"One model, as printed",
+  tP2:"HR, highest vs lowest intake", tP2per:()=>`Per extra ${pc(DATA.p2_per_step)} of daily calories`, tP2perN:"Printed as OR in the text, HR in the figure",
+  p2Out:{p2_allcause_high_vs_low:"Death, any cause",p2_cvd_high_vs_low:"Cardiovascular death",p2_heart_high_vs_low:"Heart disease death",p2_cancer_high_vs_low:"Cancer death"},
+  p1grp:{low:"Low",mid:"Middle",upper:"Upper"}
+},
+es:{
+  area:"Alimentación",langBtn:"EN",langAria:"View this page in English",
+  eyebrow:"SAM Lab · datos reales de tres artículos en acceso abierto",
+  h1:'Alimentación: ¿cuenta más lo que <span class="g">sumas</span> o lo que <span class="b">quitas</span>?',
+  heroLead:"Los grandes estudios de alimentación miran lo que la gente come casi todos los días, no una comida suelta. Aquí puedes explorar lo que encontraron tres de ellos sobre dos hábitos cotidianos: comer a la mediterránea y comer ultraprocesados. Cifras reales, tal cual vienen en los artículos.",
+  st1:"menos enfermedad del corazón y la circulación (infartos, ictus) entre quienes más comían a la mediterránea, comparados con quienes menos",
+  st2:"menos riesgo de un primer infarto, ictus o similar en mujeres que comían más a la mediterránea, teniendo en cuenta tabaco, ejercicio y menopausia",
+  st3:()=>`más riesgo de morir antes de tiempo por cada ${pc(DATA.p2_per_step)} más de las calorías diarias procedentes de ultraprocesados`,
+  vs:"vs",
+  ctaWalk:"Explícamelo paso a paso ↓", ctaMine:"Ir a mi plato ↓",
+  papersTitle:"Los artículos detrás de esta página",
+  papers:()=>[
+    ["European Journal of Epidemiology · "+yr("a"),"Galbete y cols.","Un estudio de estudios: revisiones publicadas de estudios a largo plazo, analizadas y calificadas"],
+    ["JAMA Network Open · "+yr("p1"),"Ahmad y cols.",`${num(DATA.p1_n_analysed)} mujeres de EE. UU. seguidas hasta ${DATA.p1_followup_max} años, y qué marcadores de sangre y medidas del cuerpo se asociaban con el menor riesgo`],
+    ["Nutrients · "+yr("p2"),"Suksatan y cols.",`${num(DATA.p2_n_participants)} adultos: ¿más ultraprocesados, muertes más tempranas?`]
+  ],
+  oa:"Acceso abierto · CC BY",
+  noDiff:"grupo de comparación", lower:"menos riesgo", higher:"más riesgo", lessD:"menos enfermedad", moreD:"más enfermedad",
+  vl:r=>r.dir==="same"?"sin diferencia clara":r.dir==="up"?`${pc(r.p)} más`:`${pc(r.p)} menos`,
+  s1H:"Comer más a la mediterránea se asocia con menos enfermedad cardíaca, diabetes y muertes por cáncer.",
+  s1Lead:"Los investigadores han reunido decenas de estudios a largo plazo en revisiones. Cada fila es una revisión. Compara a quienes más comían a la mediterránea con quienes menos: el grupo de comparación, marcado por la línea central. El punto es lo que encontró la revisión; la línea a su alrededor, el margen donde probablemente está la respuesta real. Un punto a la izquierda de la línea central significa que quienes más comían a la mediterránea tuvieron esa enfermedad con menos frecuencia. Elige una enfermedad y toca una fila.",
+  aChips:[["heart","Corazón"],["t2d","Diabetes"],["cancer","Muertes por cáncer"],["mem","Memoria"]],
+  aGroup:"Resultados por revisión, quienes comen más frente a menos a la mediterránea. Toca una fila para ver su margen probable.",
+  grade:{Moderate:"confianza moderada",Low:"confianza baja"},
+  aOut:{
+    a_cvd_unspecified_rosato:"Enfermedad cardiovascular",
+    a_cvd_incidence_grosso:"Enfermedad cardiovascular, casos nuevos",
+    a_chd_ami_rosato:"Enfermedad coronaria e infarto",
+    a_chd_incidence_grosso:"Enfermedad coronaria, casos nuevos",
+    a_mi_incidence_grosso:"Infarto, casos nuevos",
+    a_stroke_unspecified_rosato:"Ictus",
+    a_stroke_haemorrhagic_rosato:"Ictus hemorrágico",
+    a_t2d_jannasch:"Diabetes tipo 2",a_t2d_schwingshackl2015:"Diabetes tipo 2",a_t2d_koloverou:"Diabetes tipo 2",a_t2d_esposito:"Diabetes tipo 2",
+    a_cancer_mortality_schwingshackl2017:"Muertes por cáncer",a_cancer_mortality_bloomfield:"Muertes por cáncer",
+    a_ad_wu:"Alzhéimer",a_mci_cao:"Deterioro cognitivo leve",a_dementia_wu:"Demencia en general"
+  },
+  r1stated:{
+    heart:()=>[`${nm(DATA.a_text_cvd_19pct)}–${pc(DATA.a_text_cvd_27pct)}`,"menos enfermedad cardiovascular para quienes más comían a la mediterránea que para quienes menos (resumen aproximado de los autores)."],
+    t2d:()=>[`${DATA.a_text_t2d_13pct}–${pc(DATA.a_text_t2d_23pct)}`,"menos diabetes tipo 2 para quienes comen más a la mediterránea (resumen de los autores)."],
+    cancer:()=>[pc(DATA.a_text_cancer_mortality_14pct),"menos riesgo de morir de cáncer para quienes comen más a la mediterránea (cifra de los autores)."],
+    mem:()=>[pc(DATA.a_text_ad_40pct),`menos riesgo de alzhéimer para quienes comen más a la mediterránea (cifra de los autores). Deterioro cognitivo leve: hasta un ${pc(nm(DATA.a_text_mci_31pct))} menos.`]
+  },
+  r1row:(lab,by,r)=>r.dir==="same"?`${by} · ${lab.toLowerCase()}: margen probable desde un ${pc(-r.a)} menos hasta un ${pc(r.b)} más.`
+      :`${by} · ${lab.toLowerCase()}: margen probable entre un ${r.a} y un ${pc(r.b)} menos.`,
+  c1note:{heart:"Todas las filas quedan a la izquierda de la línea salvo el ictus hemorrágico: sin diferencia clara.",
+          t2d:"Todas las revisiones apuntan en la misma dirección; confianza de baja a moderada, nunca alta.",
+          cancer:"Las dos revisiones llegan casi al mismo sitio: menos muertes por cáncer para quienes comen más a la mediterránea.",
+          mem:"El alzhéimer sale más bajo; la demencia en general, sin diferencia clara. Hay pocos estudios."},
+  src1:()=>`Galbete y cols. ${yr("a")}, European Journal of Epidemiology`,
+  s2H:"¿Y en mujeres? La misma dirección, menor al contar el estilo de vida.",
+  s2Lead:()=>`${num(DATA.p1_n_analysed)} mujeres de EE. UU., seguidas hasta ${DATA.p1_followup_max} años y repartidas en tres grupos según lo mediterráneo de su forma de comer. Las más mediterráneas comían mucha verdura, fruta, frutos secos, legumbres, cereales integrales y pescado, preferían las grasas tipo aceite de oliva a las saturadas y comían poca carne roja y procesada. Las menos mediterráneas comían al revés: son el grupo de comparación. Cambia el interruptor para ver qué pasa al tener en cuenta tabaco, ejercicio, menopausia y antecedentes familiares.`,
+  scoreLine:()=>`Puntuación de ${sc("low")[0]} a ${sc("upper")[1]}: puntos por comer más verdura, fruta, frutos secos, cereales integrales, legumbres y pescado que la mitad de las mujeres, una proporción de grasa tipo aceite de oliva frente a saturada más alta que la de la mitad de ellas, menos carne roja y procesada, y un poco de alcohol.`,
+  gChips:()=>[["mid",`Grupo intermedio (puntuación ${sc("mid")[0]} a ${sc("mid")[1]})`],["upper",`Grupo alto (${sc("upper")[0]} a ${sc("upper")[1]})`]],
+  gLabel:"", mLabel:"", gAria:"Grupo",aAria:"Afección",uAria:"Causa de muerte", mAria:"Qué tuvieron en cuenta los investigadores",
+  mChips:[["life","Con hábitos e historial de salud en cuenta"],["age","Sin contar hábitos ni historial de salud"]],
+  p1Rows:()=>[["Menos mediterráneas","el grupo de comparación"],["Grupo intermedio",""],["Más mediterráneas",""]],
+  cmp:"comparación",
+  c2aria:(m,rm,ru)=>`Riesgo de un primer infarto, ictus o similar en mujeres, comparado con las menos mediterráneas, ${m==="life"?"con hábitos e historial de salud en cuenta":"sin tener en cuenta hábitos ni historial de salud"}. Grupo intermedio: ${rm}. Más mediterráneas: ${ru}.`,
+  rng:r=>r.dir==="same"?`desde un ${pc(-r.a)} menos hasta un ${pc(r.b)} más, así que no se puede descartar que no haya diferencia`:`entre un ${r.a} y un ${pc(r.b)} menos`,
+  r2:(m,rm,ru,sm,su)=>{
+    const l=T.es;
+    if(m==="age") return [`${sm}–${pc(su)}`,`<b>menos riesgo para el grupo intermedio y las más mediterráneas que para las menos, sin tener en cuenta hábitos ni historial de salud.</b><small>Margen probable: grupo intermedio, ${l.rng(rm)}; más mediterráneas, ${l.rng(ru)}.</small>`];
+    return [rm.p===ru.p?pc(rm.p):`${rm.p}–${pc(ru.p)}`,`<b>menos riesgo tanto para el grupo intermedio como para las más mediterráneas que para las menos, con hábitos e historial de salud en cuenta.</b><small>Margen probable: grupo intermedio, ${l.rng(rm)}; más mediterráneas, ${l.rng(ru)}.</small>`];
+  },
+  c2note:{life:"Con hábitos e historial de salud en cuenta, la distancia se acorta.",
+          age:"La cifra que sale en los titulares, antes de tener en cuenta hábitos e historial de salud."},
+  whyH:"¿Por qué podría funcionar?",
+  whyP:"Al empezar el estudio, a cada mujer se le sacó sangre y se la pesó. Después, los investigadores se preguntaron: ¿qué parte del menor riesgo cardiovascular de las más mediterráneas se explica por diferencias en estas medidas? Cada barra es esa parte.",
+  medsSub:{p1_mediator_inflammation:"Marcadores en sangre del estado de «alarma» leve y prolongado del cuerpo, como la PCR",p1_mediator_glucose:"Cómo maneja el cuerpo el azúcar: azúcar en sangre a largo plazo (HbA1c), resistencia a la insulina, diabetes",p1_mediator_bmi:"Peso en relación con la altura"},
+  meds:{p1_mediator_inflammation:"Inflamación",p1_mediator_glucose:"Azúcar en sangre e insulina",p1_mediator_bmi:"Peso corporal (IMC)",
+        p1_mediator_bp:"Tensión arterial",p1_mediator_tradlipids:"Colesterol estándar",p1_mediator_hdl:"Partículas HDL",p1_mediator_vldl:"Partículas VLDL",
+        p1_mediator_ldl:"Partículas LDL",p1_mediator_bcaa:"Aminoácidos de cadena ramificada",p1_mediator_apolipo:"Apolipoproteínas",p1_mediator_smallmol:"Otras moléculas pequeñas"},
+  whyEg:()=>`<b>Cómo leerlo:</b> alrededor de un ${pc(Math.round(parseFloat(DATA.p1_mediator_inflammation)))} del menor riesgo cardiovascular iba de la mano de diferencias en la inflamación. No significa que estas mujeres tuvieran un ${pc(Math.round(parseFloat(DATA.p1_mediator_inflammation)))} menos de inflamación.`,
+  overlap:"Los tres se solapan (suelen ir juntos), así que las barras no se suman. Y una buena parte del menor riesgo sigue sin explicación.",
+  src2:()=>`Ahmad y cols. ${yr("p1")}, JAMA Network Open`,
+  s3H:"Más ultraprocesados se asocian con más riesgo de morir antes de tiempo.",
+  s3Lead:()=>`Esta revisión reunió ${DATA.p2_n_studies} estudios a largo plazo, ${num(DATA.p2_n_participants)} adultos en total. Cada fila compara a quienes más ultraprocesados comían con quienes menos: el grupo de comparación, marcado por la línea central. Un punto a la derecha de la línea significa más riesgo de morir durante el estudio. Elige una causa de muerte.`,
+  s3Diff:"<b>¿Qué cuenta como ultraprocesado?</b> Comida lista para comer, barata, sabrosa, muy calórica y con un envase atractivo, hecha sobre todo con extractos de alimentos y aditivos. Piensa en snacks envasados, bebidas azucaradas y muchos platos preparados.",
+  uChips:[["any","Cualquier causa"],["cvd","Corazón y circulación"],["cancer","Cáncer"]],
+  p2Rows:{any:"Cualquier causa",cvd:"Corazón y circulación",cancer:"Cáncer"},
+  c3aria:(a,c,k)=>`Riesgo de morir, quienes más frente a quienes menos ultraprocesados comían. Cualquier causa: ${a}. Corazón y circulación: ${c}. Cáncer: ${k}.`,
+  r3:(u,r)=>{
+    const what={any:"morir por cualquier causa",cvd:"morir por enfermedad cardiovascular",cancer:"morir de cáncer"}[u];
+    if(r.dir==="same") return ["≈",`<b>Sin diferencia clara en el riesgo de ${what}.</b><small>Margen probable: desde un ${pc(-r.a)} menos hasta un ${pc(r.b)} más.</small>`];
+    return [pc(r.p),`<b>más riesgo de ${what} para quienes más ultraprocesados comían, comparados con quienes menos.</b><small>Margen probable: entre un ${r.a} y un ${pc(r.b)} más.</small>`];
+  },
+  readout:r=>`<b>Por cada ${pc(DATA.p2_per_step)} más de las calorías diarias procedentes de ultraprocesados:</b> alrededor de un ${pc(DATA.p2_allcause_per10pct_pct)} más de riesgo de morir por cualquier causa (margen probable: entre un ${r.a} y un ${pc(r.b)} más).`,
+  c3note:{any:"",
+          cvd:"La señal más clara: las muertes cardiovasculares.",
+          cancer:"Sin diferencia clara en las muertes por cáncer: la relación no es igual para todas las causas."},
+  src3:()=>`Suksatan y cols. ${yr("p2")}, Nutrients`,
+  s4H:"¿Dónde cae tu plato?",
+  s4Lead:"Responde a dos preguntas rápidas sobre una semana normal. Para cada estudio verás qué grupo come más como tú y cómo le fue. Después, una cosa que probar esta semana.",
+  q1:"¿Con qué frecuencia comes verdura o legumbres?",
+  q2:"¿Con qué frecuencia comes comida envasada lista para comer?",
+  o1:[["most","Casi a diario"],["some","Algunos días"],["rarely","Rara vez"]],
+  o2:[["rarely","Rara vez"],["some","Algunos días"],["most","Casi a diario"]],
+  m1eb:()=>`Galbete ${yr("a")} · muchos estudios`, m2eb:()=>`Ahmad ${yr("p1")} · mujeres`, m3eb:()=>`Suksatan ${yr("p2")} · ultraprocesados`,
+  wait1:"Toca una respuesta arriba.", wait2:"Toca una respuesta arriba.",
+  m1:q=>{const s=`${nm(DATA.a_text_cvd_19pct)} y un ${pc(DATA.a_text_cvd_27pct)}`;return {
+    most:["Comes como quienes más comían a la mediterránea.",`En las revisiones, la gente como tú tuvo entre un ${s} menos de enfermedad cardiovascular que quienes menos comían a la mediterránea.`],
+    some:["Estás en algún punto intermedio.","Las revisiones solo comparan a quienes más y a quienes menos comían a la mediterránea, así que no hay cifra para el medio."],
+    rarely:["Comes como quienes menos comían a la mediterránea: el grupo de comparación.",`En las revisiones, quienes más comían a la mediterránea tuvieron entre un ${s} menos de enfermedad cardiovascular que la gente como tú.`]}[q]},
+  m2:(q,rm,ru)=>({
+    most:["Comes como las más mediterráneas.",`Las mujeres como tú tuvieron un ${pc(ru.p)} menos de riesgo que las menos mediterráneas, con hábitos e historial de salud en cuenta. Pero el estudio no puede descartar que no haya diferencia.`],
+    some:["Comes como el grupo intermedio.",`Las mujeres como tú tuvieron un ${pc(rm.p)} menos de riesgo que las menos mediterráneas, con hábitos e historial de salud en cuenta (margen probable: entre un ${rm.a} y un ${pc(rm.b)} menos).`],
+    rarely:["Comes como las menos mediterráneas: el grupo de comparación.",`Con hábitos e historial de salud en cuenta, el grupo intermedio y las más mediterráneas tuvieron un ${pc(rm.p)} menos de riesgo que las mujeres como tú.`]})[q],
+  m3:(q,r)=>({
+    most:["Comes como quienes más comían.",`La gente como tú tuvo un ${pc(r.p)} más de riesgo de morir por cualquier causa que quienes menos comían.`],
+    some:["Estás en algún punto intermedio.","La revisión solo compara a quienes más y a quienes menos, así que no hay cifra para el medio."],
+    rarely:["Comes como quienes menos comían: el grupo de comparación.",`Quienes más comían tuvieron un ${pc(r.p)} más de riesgo de morir por cualquier causa que la gente como tú.`]})[q],
+  mineNote:"Comparan grupos de personas. No son tu probabilidad personal.",
+  nextEb:"Tu siguiente paso",
+  next:(a,b)=>{
+    if(a===null||b===null) return ["Responde a las dos preguntas.",""];
+    if(a!=="most") return ["Esta semana, añade un plato de legumbres, frutos secos o una ensalada abundante a tu comida principal cinco días. Primero suma, luego recorta.","Es la dirección que señalan los estudios mediterráneos. Una apuesta sensata, no una solución demostrada."];
+    if(b!=="rarely") return ["Cambia un producto envasado que tomas casi a diario por su versión sencilla.","La revisión sobre ultraprocesados señala lo ya preparado. Una apuesta sensata, no una solución demostrada."];
+    return ["Sigue así: esta semana, cocina desde cero una comida que normalmente comprarías ya preparada.","¿Quieres el porqué? Los artículos de abajo explican cómo la comida estabiliza tu azúcar en sangre y alimenta tu intestino. Una apuesta sensata, no una garantía."];
+  },
+  lnkTest:"Lee: la parte del intestino (en inglés) →", lnkPost:"Lee: cómo estabilizar el azúcar en sangre (en inglés) →",
+  subTitle:"Una palanca con base científica cada semana. Gratis.",
+  subText:"Cada semana, Swiss Army Mum convierte la investigación sobre sueño, alimentación, movimiento, cerebro y mente en una sola cosa que puedes hacer de verdad. Para mujeres ocupadas de más de 35 años. En inglés.",
+  subBtn:"Suscríbete gratis",
+  moreSum:"¿Cuánta certeza hay? Fuentes y detalles",
+  more:()=>{
+    const ru=ph(DATA.p2_allcause_high_vs_low);
+    return `<h3>¿Cuánta certeza hay?</h3>
+<p><b>Relaciones, no pruebas.</b> Los tres artículos se basan en estudios observacionales: se registró lo que comía la gente y se la siguió durante años. Muestran qué grupos salieron mejor, no que cambiar tu plato vaya a cambiar tu riesgo.</p>
+<p><b>Relativo frente a absoluto.</b> Porcentajes como «un ${pc(ru.p)} más» comparan grupos. Los ${dec(DATA.p1_events_low_pct)} y ${dec(DATA.p1_events_upper_pct)} de cada 100 son proporciones brutas de mujeres con un primer infarto, ictus o similar, sin ningún ajuste.</p>
+<p><b>El resultado de Ahmad depende del modelo.</b> Contando solo la edad, las calorías y las pastillas del ensayo (el estudio se hizo dentro de un ensayo de aspirina y vitamina E), el grupo alto tenía un ${pc(DATA.p1_rrr_upper)} menos de riesgo. Al añadir tabaco, menopausia, terapia hormonal, ejercicio y antecedentes familiares, el margen probable del grupo alto llega a la ausencia de diferencia. Los factores del «por qué» se analizaron uno por uno y se solapan; todos juntos en un mismo modelo se asociaban a un ${pc(dec(DATA.p1_mediator_combined_total))}, tal como se publicó, menos que la inflamación sola. Los autores dicen que una parte considerable queda sin aclarar.</p>
+<p><b>A quién se estudió.</b> Ahmad: ${num(DATA.p1_n_analysed)} profesionales sanitarias de EE. UU. de ${DATA.p1_age_eligibility} años o más y sin enfermedad cardiovascular al empezar, con una edad media de ${dec(DATA.p1_mean_age)} años; entre un ${pc(dec(DATA.p1_t1_postmenopausal_low))} y un ${pc(dec(DATA.p1_t1_postmenopausal_upper))} habían pasado la menopausia, según el grupo de dieta. Los autores advierten que las profesionales sanitarias pueden comportarse de forma distinta a los hombres o a mujeres con más riesgo. Galbete y Suksatan no dan resultados por sexo.</p>
+<p><b>Las calificaciones de Galbete.</b> Los autores califican su confianza como baja o moderada en todos los resultados; ninguna alta. En muchas de las revisiones, el margen donde caería probablemente el resultado de un estudio nuevo incluye la ausencia de diferencia. La revisión no incluye «morir por cualquier causa». El paso 1 muestra solo las filas que el artículo etiqueta como comparación entre quienes más y menos comen a la mediterránea; se dejan fuera las filas por cada 2 puntos, las de comparación sin etiquetar y los reanálisis por tipo de puntuación. Un consumo moderado de alcohol suma un punto en las dos puntuaciones mediterráneas más usadas, también en la de Ahmad; no es un consejo para beber.</p>
+<p><b>Los cabos sueltos de Suksatan.</b> El texto dice que detrás de la cifra de «cualquier causa» hay ${DATA.p2_allcause_studies_text} estudios; el gráfico de bosque muestra ${DATA.p2_allcause_studies_plot}. La cifra por cada ${pc(DATA.p2_per_step)} lleva dos etiquetas técnicas distintas en el artículo (ver la tabla). La curva según la cantidad solo se publicó como imagen, así que esta página no da ningún riesgo para una cantidad concreta. El texto y la figura tampoco coinciden en si las muertes cardiovasculares suben con cada ${pc(DATA.p2_per_step)} más.</p>
+<p><b>Dos exposiciones, nunca una sola escala.</b> Los pasos 1 y 2 miden cuánto comía la gente a la mediterránea; el paso 3, cuántos ultraprocesados. Por eso las muertes por cáncer pueden salir más bajas en uno y sin cambios en el otro sin que los artículos se contradigan.</p>
+${numbersTable()}
+<h3>Fuentes y licencias</h3>
+<p>Galbete C, Schwingshackl L, Schwedhelm C, Boeing H, Schulze MB. Evaluating Mediterranean diet and risk of chronic disease in cohort studies: an umbrella review of meta-analyses. <i>European Journal of Epidemiology</i> ${yr("a")}. <a href="https://doi.org/${DATA.papers.a.doi}" target="_blank" rel="noopener">doi:${DATA.papers.a.doi}</a>. Con licencia <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Qué hemos cambiado: hemos seleccionado estimaciones publicadas y las presentamos como gráficos interactivos y texto en lenguaje sencillo; no se ha alterado ningún valor.</p>
+<p>Ahmad S, Moorthy MV, Demler OV, Hu FB, Ridker PM, Chasman DI, Mora S. Assessment of Risk Factors and Biomarkers Associated With Risk of Cardiovascular Disease Among Women Consuming a Mediterranean Diet. <i>JAMA Network Open</i> ${yr("p1")}. <a href="https://doi.org/${DATA.papers.p1.doi}" target="_blank" rel="noopener">doi:${DATA.papers.p1.doi}</a>. Con licencia <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Qué hemos cambiado: hemos seleccionado estimaciones publicadas y las presentamos como gráficos interactivos y texto en lenguaje sencillo; no se ha alterado ningún valor.</p>
+<p>Suksatan W, Moradi S, Naeini F, Bagheri R, Mohammadi H, Talebi S, Mehrabani S, Hojjati Kermani MA, Suzuki K. Ultra-Processed Food Consumption and Adult Mortality Risk: A Systematic Review and Dose-Response Meta-Analysis of ${DATA.p2_n_participants} Participants. <i>Nutrients</i> ${yr("p2")}. <a href="https://doi.org/${DATA.papers.p2.doi}" target="_blank" rel="noopener">doi:${DATA.papers.p2.doi}</a>. Con licencia <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Qué hemos cambiado: hemos seleccionado estimaciones publicadas y las presentamos como gráficos interactivos y texto en lenguaje sencillo; no se ha alterado ningún valor.</p>
+<p>Una explicación independiente, no elaborada ni respaldada por los autores ni por las revistas.</p>
+<p>Esto es información educativa, no un consejo médico personal. Tu biología, tu historia y tu contexto importan. Consulta con un profesional sanitario cualificado.</p>`;},
+  tblH:"Las cifras",
+  tblCols:["Fuente","Resultado o grupo","Medida y comparación","Valor","IC 95 %","Modelo o nota"],
+  tA:"RR, adherencia más alta frente a más baja", tGrade:g=>`NutriGrade: ${g==="Moderate"?"moderada":"baja"}`,
+  tP1:()=>`HR frente a puntuación ${sc("low")[0]} a ${sc("low")[1]}`, tP1age:"Edad, tratamiento del ensayo, energía", tP1life:"Modelo básico: además tabaco, menopausia, terapia hormonal, ejercicio, infarto en padres",
+  tP1ev:"Proporción bruta con un primer evento cardiovascular, %", tP1evN:()=>`Seguimiento de hasta ${DATA.p1_followup_max} años, sin ajustar`,
+  tP1med:"Parte de la reducción del riesgo atribuida, %", tP1medN:"Grupo alto, modelo básico; un conjunto cada vez; se solapan", tP1comb:"Todos los conjuntos juntos", tP1combN:"Un solo modelo, tal como se publicó",
+  tP2:"HR, consumo más alto frente a más bajo", tP2per:()=>`Por cada ${pc(DATA.p2_per_step)} más de las calorías diarias`, tP2perN:"OR en el texto, HR en la figura",
+  p2Out:{p2_allcause_high_vs_low:"Muerte por cualquier causa",p2_cvd_high_vs_low:"Muerte cardiovascular",p2_heart_high_vs_low:"Muerte por enfermedad cardíaca",p2_cancer_high_vs_low:"Muerte por cáncer"},
+  p1grp:{low:"Bajo",mid:"Intermedio",upper:"Alto"}
+}};
+const L=()=>T[lang];
+const t=k=>{const v=L()[k];return typeof v==="function"?v():v};
+const $=id=>document.getElementById(id);
+const ci=e=>`${dec(e[1])}–${dec(e[2])}`;
+function numbersTable(){
+  const l=L(),c=l.tblCols;
+  let s=`<h3>${l.tblH}</h3><div class="tbl"><table><tr>${c.map(x=>`<th>${x}</th>`).join("")}</tr>`;
+  const row=(a,b,m,v,r,n)=>`<tr><td>${a}</td><td>${b}</td><td>${m}</td><td>${v}</td><td>${r}</td><td>${n}</td></tr>`;
+  Object.values(A_ROWS).flat().forEach(id=>{const d=DATA[id];s+=row(`Galbete ${yr("a")} (${d.by[0]} ${d.by[1]})`,l.aOut[id],l.tA,dec(d.e[0]),ci(d.e),l.tGrade(d.g))});
+  const p1=`Ahmad ${yr("p1")}`,g=l.p1grp;
+  [["mid","p1_cvd_middle_vs_low",l.tP1age],["upper","p1_cvd_upper_vs_low",l.tP1age],["mid","p1_cvd_basic_middle_vs_low",l.tP1life],["upper","p1_cvd_basic_upper_vs_low",l.tP1life]]
+    .forEach(([k,id,n])=>{const e=DATA[id];s+=row(p1,`${g[k]} (${sc(k)[0]}–${sc(k)[1]})`,l.tP1(),dec(e[0]),ci(e),n)});
+  [["low","p1_events_low_pct"],["mid","p1_events_mid_pct"],["upper","p1_events_upper_pct"]].forEach(([k,id])=>{s+=row(p1,`${g[k]} (${sc(k)[0]}–${sc(k)[1]})`,l.tP1ev,dec(DATA[id]),"",l.tP1evN())});
+  MEDS.forEach(id=>{s+=row(p1,l.meds[id],l.tP1med,dec(DATA[id]),"",l.tP1medN)});
+  s+=row(p1,l.tP1comb,l.tP1med,dec(DATA.p1_mediator_combined_total),"",l.tP1combN);
+  const p2=`Suksatan ${yr("p2")}`;
+  ["p2_allcause_high_vs_low","p2_cvd_high_vs_low","p2_heart_high_vs_low","p2_cancer_high_vs_low"].forEach(id=>{const e=DATA[id];s+=row(p2,l.p2Out[id],l.tP2,dec(e[0]),ci(e),"")});
+  s+=row(p2,l.p2Out.p2_allcause_high_vs_low,l.tP2per(),dec(DATA.p2_allcause_per10pct[0]),ci(DATA.p2_allcause_per10pct),l.tP2perN);
+  return s+`</table></div>`;
+}
+const narrow=()=>innerWidth<600;
+/* x position for a printed ratio on a scale given in hundredths, clamped to the plot area */
+const sx=(scl,x0,x1)=>v=>Math.max(x0,Math.min(x1,x0+(hund(v)-scl[0])/(scl[1]-scl[0])*(x1-x0)));
+/* filled circle = Mediterranean ("add"); hollow ring = ultra-processed ("cut") */
+function mark(cx,cy,r,kind,on){
+  return kind==="add"?`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${on?"#025A5A":"#3D7A78"}" stroke="#fff" stroke-width="2"/>`
+    :`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="${on?"#00579B":"#3A78B0"}" stroke-width="${on?3.5:2.5}"/>`;
+}
+function whisker(e,X,cy,kind,on){
+  const c=kind==="add"?(on?"#025A5A":"#3D7A78"):(on?"#00579B":"#3A78B0"),lo=X(e[1]),hi=X(e[2]),w=on?4:3;
+  return `<line x1="${lo}" x2="${hi}" y1="${cy}" y2="${cy}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`+
+    `<line x1="${lo}" x2="${lo}" y1="${cy-6}" y2="${cy+6}" stroke="${c}" stroke-width="2"/><line x1="${hi}" x2="${hi}" y1="${cy-6}" y2="${cy+6}" stroke="${c}" stroke-width="2"/>`+
+    mark(X(e[0]),cy,on?8:6,kind,on);
+}
+/* Step 1: one button per published Galbete row, each with its own dot-and-whisker track on a shared scale */
+function chart1(){
+  const l=L(),ids=A_ROWS[st.a],nw=narrow(),box=$("c1"),cw=box.clientWidth||700;
+  /* track drawn at its real pixel width so labels keep their size */
+  const W=Math.max(200,Math.round(nw?cw-20:cw-20-220-116-24)),H=30,P=10,X=sx(SC_A,P,W-P),xr=X("1.00");box.setAttribute("aria-label",l.aGroup);
+  let s=`<div class="faxis" aria-hidden="true"><span class="fl"></span><svg class="ft" viewBox="0 0 ${W} 16"><text x="${xr}" y="12" text-anchor="middle" font-size="11" font-weight="700" fill="#4A4A45">${l.noDiff}</text></svg><span class="fv"></span></div>`;
+  ids.forEach((id,i)=>{
+    const d=DATA[id],r=ph(d.e),on=i===st.aRow[st.a];
+    s+=`<button type="button" class="frow" data-row="${i}" aria-pressed="${on}"><span class="fl"><b>${l.aOut[id]}</b><span>${d.by[0]} ${d.by[1]} · ${l.grade[d.g]}</span></span>`+
+      `<svg class="ft" viewBox="0 0 ${W} ${H}" aria-hidden="true" focusable="false">${whisker(d.e,X,H/2,"add",on)}</svg>`+
+      `<span class="fv">${l.vl(r)}</span></button>`;
+  });
+  s+=`<div class="faxis" aria-hidden="true"><span class="fl"></span><svg class="ft" viewBox="0 0 ${W} 16"><text x="${P}" y="12" font-size="11" fill="#4A4A45">← ${l.lessD}</text><text x="${W-P}" y="12" text-anchor="end" font-size="11" fill="#4A4A45">${l.moreD} →</text></svg><span class="fv"></span></div>`;
+  box.innerHTML=s;
+  const f=box.querySelector(".frow .ft"),rows=box.querySelectorAll(".frow");
+  if(f&&rows.length){const bb=box.getBoundingClientRect(),fb=f.getBoundingClientRect(),x=fb.left-bb.left+xr*fb.width/W;
+    const y0=rows[0].getBoundingClientRect().top-bb.top,y1=rows[rows.length-1].getBoundingClientRect().bottom-bb.top;
+    box.insertAdjacentHTML("beforeend",`<div class="refline" aria-hidden="true" style="left:${x-0.75}px;top:${y0}px;height:${y1-y0}px"></div>`);}
+}
+/* Steps 2 and 3: one labelled SVG, rows = published estimates, whiskers = plausible range, no connecting lines */
+function forest(rows,scl,kind,aria){
+  const l=L(),nw=narrow(),W=nw?360:760,lab=nw?0:250,valW=nw?0:150,rowH=nw?58:48,top=24,H=top+rows.length*rowH+26;
+  const x0=nw?14:lab+14,x1=nw?W-14:W-valW-14,X=sx(scl,x0,x1),xr=X("1.00"),col=kind==="add"?"#025A5A":"#00579B";
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}"><style>text{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}</style>`;
+  s+=`<line x1="${xr}" x2="${xr}" y1="${top-4}" y2="${H-24}" stroke="#8A8A82" stroke-width="1.5"/>`;
+  s+=`<text x="${xr}" y="${top-10}" text-anchor="middle" font-size="11" font-weight="700" fill="#4A4A45">${l.noDiff}</text>`;
+  rows.forEach((r,i)=>{
+    const y=top+i*rowH,cy=nw?y+40:y+rowH/2,fw=r.on?800:600,fc=r.on?"#1A1A18":"#4A4A45";
+    if(nw){
+      s+=`<text x="0" y="${y+16}" font-size="12.5" font-weight="${fw}" fill="${fc}">${r.label}${r.sub&&r.e?` · ${r.sub}`:""}</text>`;
+      s+=`<text x="${W}" y="${y+16}" text-anchor="end" font-size="12.5" font-weight="800" fill="${r.e?col:"#4A4A45"}">${r.val}</text>`;
+    }else{
+      s+=`<text x="0" y="${cy-2}" font-size="13.5" font-weight="${fw}" fill="${fc}">${r.label}</text>`;
+      if(r.sub) s+=`<text x="0" y="${cy+14}" font-size="11.5" fill="#4A4A45">${r.sub}</text>`;
+      s+=`<text x="${W}" y="${cy+5}" text-anchor="end" font-size="13.5" font-weight="${r.on?800:700}" fill="${r.e?col:"#4A4A45"}">${r.val}</text>`;
+    }
+    if(r.e) s+=whisker(r.e,X,cy,kind,r.on);
+    else s+=`<rect x="${xr-6}" y="${cy-6}" width="12" height="12" transform="rotate(45 ${xr} ${cy})" fill="#fff" stroke="#4A4A45" stroke-width="2"/>`;
+  });
+  s+=`<text x="${x0}" y="${H-6}" font-size="11" fill="#4A4A45">← ${l.lower}</text><text x="${x1}" y="${H-6}" text-anchor="end" font-size="11" fill="#4A4A45">${l.higher} →</text></svg>`;
+  return s;
+}
+const P1KEY={life:{mid:"p1_cvd_basic_middle_vs_low",upper:"p1_cvd_basic_upper_vs_low"},age:{mid:"p1_cvd_middle_vs_low",upper:"p1_cvd_upper_vs_low"}};
+function chart2(){
+  const l=L(),k=P1KEY[st.m],rm=ph(DATA[k.mid]),ru=ph(DATA[k.upper]),rows=l.p1Rows();
+  const data=[{label:rows[0][0],sub:rows[0][1],e:null,val:l.cmp,on:false},
+    {label:rows[1][0],sub:rows[1][1],e:DATA[k.mid],val:l.vl(rm),on:true},
+    {label:rows[2][0],sub:rows[2][1],e:DATA[k.upper],val:l.vl(ru),on:true}];
+  $("c2").innerHTML=forest(data,SC_P1,"add",l.c2aria(st.m,l.vl(rm),l.vl(ru)));
+}
+function chart3(){
+  const l=L(),rs={};
+  const data=Object.entries(P2_ROWS).map(([u,id])=>{rs[u]=l.vl(ph(DATA[id]));return {label:l.p2Rows[u],e:DATA[id],val:rs[u],on:st.u===u}});
+  $("c3").innerHTML=forest(data,SC_P2,"cut",l.c3aria(rs.any,rs.cvd,rs.cancer));
+}
+function step1(){
+  const l=L(),id=A_ROWS[st.a][st.aRow[st.a]],d=DATA[id],[b,tx]=l.r1stated[st.a]();
+  $("r1big").textContent=b;
+  $("r1txt").innerHTML=`<b>${tx}</b><small>${l.r1row(l.aOut[id],d.by[0]+" "+d.by[1],ph(d.e))}</small>`;
+  $("c1note").textContent=l.c1note[st.a];
+  chart1();
+}
+function step2(){
+  const l=L(),k=P1KEY[st.m];
+  const[b,tx]=l.r2(st.m,ph(DATA[k.mid]),ph(DATA[k.upper]),DATA.p1_rrr_middle,DATA.p1_rrr_upper);
+  $("r2big").textContent=b;$("r2txt").innerHTML=tx;$("c2note").textContent=l.c2note[st.m];
+  chart2();
+}
+function step3(){
+  const l=L(),[b,tx]=l.r3(st.u,ph(DATA[P2_ROWS[st.u]]));
+  $("r3big").textContent=b;$("r3txt").innerHTML=tx;$("c3note").textContent=l.c3note[st.u];
+  $("readout").innerHTML=l.readout(ph(DATA.p2_allcause_per10pct));
+  chart3();
+}
+function mine(){
+  const l=L(),set=(id,v,w)=>{const m=$(id),s=$(id+"s");if(v){m.textContent=v[0];m.className="main";s.textContent=v[1]}else{m.textContent=w;m.className="main wait";s.textContent=""}};
+  set("m1",st.q1?l.m1(st.q1):null,l.wait1);
+  set("m2",st.q1?l.m2(st.q1,ph(DATA.p1_cvd_basic_middle_vs_low),ph(DATA.p1_cvd_basic_upper_vs_low)):null,l.wait1);
+  set("m3",st.q2?l.m3(st.q2,ph(DATA.p2_allcause_high_vs_low)):null,l.wait2);
+  const[nh,np]=l.next(st.q1,st.q2);$("nextH").textContent=nh;$("nextP").textContent=np;
+}
+const chips=(arr,key,cur,cls="")=>arr.map(([k,n])=>`<button type="button" class="chip ${cls}" data-${key}="${k}" aria-pressed="${cur===k}">${n}</button>`).join("");
+function render(){
+  const l=L();
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-t]").forEach(el=>{el.innerHTML=t(el.dataset.t)});
+  $("lang").textContent=l.langBtn;$("lang").setAttribute("aria-label",l.langAria);
+  $("st1").textContent=`${nm(DATA.a_text_cvd_19pct)}–${pc(DATA.a_text_cvd_27pct)}`;
+  $("st2").textContent=pc(ph(DATA.p1_cvd_basic_middle_vs_low).p);
+  $("st3").textContent="+"+pc(DATA.p2_allcause_per10pct_pct);
+  const keys=["a","p1","p2"];
+  $("papers").innerHTML=l.papers().map((p,i)=>`<a class="paper ${i===2?"cut":""}" href="https://doi.org/${DATA.papers[keys[i]].doi}" target="_blank" rel="noopener"><div class="j">${p[0]}</div><div class="w">${p[1]}</div><div class="n">${p[2]}</div><span class="oa">${l.oa}</span></a>`).join("");
+  $("aChips").innerHTML=chips(l.aChips,"a",st.a);
+  $("aChips").setAttribute("aria-label",l.aAria);$("uChips").setAttribute("aria-label",l.uAria);$("modelChips").setAttribute("aria-label",l.mAria);
+  $("modelChips").innerHTML=(l.mLabel?`<span class="ctl-lbl">${l.mLabel}</span>`:"")+chips(l.mChips,"m",st.m,"seg");
+  $("uChips").innerHTML=chips(l.uChips,"u",st.u,"blu");
+  $("bars").innerHTML=MEDS.slice(0,3).map(id=>`<li class="bar-row"><span class="bar-label">${l.meds[id]}<small>${l.medsSub[id]}</small></span><span class="bar-val">${pc(dec(DATA[id]))}</span><span class="bar-track" aria-hidden="true"><span class="bar-fill" style="width:${DATA[id]}%"></span></span></li>`).join("");
+  $("opts1").innerHTML=l.o1.map(([k,n])=>`<button type="button" class="opt" data-q1="${k}" aria-pressed="${st.q1===k}">${n}</button>`).join("");
+  $("opts2").innerHTML=l.o2.map(([k,n])=>`<button type="button" class="opt" data-q2="${k}" aria-pressed="${st.q2===k}">${n}</button>`).join("");
+  $("more").innerHTML=t("more");
+  step1();step2();step3();mine();
+}
+const press=(sel,b)=>document.querySelectorAll(sel).forEach(x=>x.setAttribute("aria-pressed",x===b));
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const d=b.dataset;
+  if(b.id==="lang"){lang=lang==="en"?"es":"en";render();$("lang").focus();return}
+  if(d.a){st.a=d.a;press("#aChips .chip",b);step1()}
+  if(d.row!==undefined){const i=+d.row;st.aRow[st.a]=i;step1();const nb=$("c1").querySelector(`[data-row="${i}"]`);if(nb)nb.focus()}
+  if(d.g){st.g=d.g;press("#grpChips .chip",b);step2()}
+  if(d.m){st.m=d.m;press("#modelChips .chip",b);step2()}
+  if(d.u){st.u=d.u;press("#uChips .chip",b);step3()}
+  if(d.q1){st.q1=d.q1;press("#opts1 .opt",b);mine()}
+  if(d.q2){st.q2=d.q2;press("#opts2 .opt",b);mine()}
+});
+let wasN=narrow(),rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{chart1();if(narrow()!==wasN){wasN=narrow();chart2();chart3()}},120)});
+render();
+</script>
+</body>
+</html>
