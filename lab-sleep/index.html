@@ -142,6 +142,11 @@ th{color:var(--ink-mid);font-weight:600}
 footer{text-align:center;margin-top:28px;padding:20px 0 40px;border-top:1px solid var(--cream-dark)}
 footer a{font-size:13px;font-weight:600;text-decoration:none}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+.stepno.you{width:auto;min-width:38px;padding:0 16px;border-radius:999px;letter-spacing:.04em}
+.bridge{margin-top:64px;padding-top:36px;border-top:1px solid var(--cream-dark)}
+.bridge h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.01em;line-height:1.15}
+.bridge p{color:var(--ink-mid);margin-top:8px}
+.seedata{margin:16px 0 4px;font-weight:700;font-size:14.5px}.seedata a{color:inherit}
 </style>
 </head>
 <body>
@@ -165,7 +170,7 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
       <div class="stat" style="--c:var(--amber)"><div class="big" id="st2"></div><div class="lbl" data-t="st2"></div></div>
       <div class="stat" style="--c:var(--teal)"><div class="big" id="st3"></div><div class="lbl" data-t="st3"></div></div>
     </div>
-    <div class="ctas"><a class="cta primary" href="#s1" data-t="ctaWalk"></a><a class="cta ghost" href="#s4" data-t="ctaMine"></a></div>
+    <div class="ctas"><a class="cta primary" href="#s4" data-t="ctaMine"></a><a class="cta ghost" href="#s1" data-t="ctaWalk"></a></div>
     <div class="papers">
       <div class="papers-title" data-t="papersTitle"></div>
       <div class="papers-grid" id="papers"></div>
@@ -174,6 +179,32 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
 </header>
 
 <main class="wrap">
+  <section class="step" id="s4">
+    <div class="stepno you" data-t="youTag"></div>
+    <h2 data-t="s4H"></h2>
+    <p class="lead" data-t="s4Lead"></p>
+    <div class="panel">
+      <p class="q" id="q1" data-t="q1"></p>
+      <div class="hours" id="hours" role="group" aria-labelledby="q1"></div>
+      <p class="q" id="q2" data-t="q2"></p>
+      <p class="qhint" data-t="q2hint"></p>
+      <div class="rhythm" id="rhythm" role="group" aria-labelledby="q2"></div>
+      <div class="mine" aria-live="polite">
+        <div class="result"><div class="eb" id="m1eb"></div><div class="main" id="m1"></div><div class="sub" id="m1s"></div></div>
+        <div class="result amb"><div class="eb" data-t="m2eb"></div><div class="main" id="m2"></div><div class="sub" id="m2s"></div></div>
+      </div>
+      <p class="note" data-t="mineNote"></p>
+      <div class="next" aria-live="polite"><div class="eb" data-t="nextEb"></div><h3 id="nextH"></h3><p id="nextP"></p></div>
+      <p class="seedata"><a href="#s1" data-t="seeData"></a></p>
+      <div class="links">
+        <a href="https://tools.swissarmymum.com/sleep/" target="_blank" rel="noopener" data-t="lnkTest"></a>
+        <a href="https://www.swissarmymum.com/p/sleep" target="_blank" rel="noopener" data-t="lnkPost"></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="bridge"><h2 data-t="dataH"></h2><p data-t="dataP"></p></div>
+
   <section class="step" id="s1">
     <div class="stepno">1</div>
     <h2 data-t="s1H"></h2>
@@ -213,28 +244,6 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
     <p class="punch" data-t="s3Punch"></p>
   </section>
 
-  <section class="step" id="s4">
-    <div class="stepno">4</div>
-    <h2 data-t="s4H"></h2>
-    <p class="lead" data-t="s4Lead"></p>
-    <div class="panel">
-      <p class="q" id="q1" data-t="q1"></p>
-      <div class="hours" id="hours" role="group" aria-labelledby="q1"></div>
-      <p class="q" id="q2" data-t="q2"></p>
-      <p class="qhint" data-t="q2hint"></p>
-      <div class="rhythm" id="rhythm" role="group" aria-labelledby="q2"></div>
-      <div class="mine" aria-live="polite">
-        <div class="result"><div class="eb" id="m1eb"></div><div class="main" id="m1"></div><div class="sub" id="m1s"></div></div>
-        <div class="result amb"><div class="eb" data-t="m2eb"></div><div class="main" id="m2"></div><div class="sub" id="m2s"></div></div>
-      </div>
-      <p class="note" data-t="mineNote"></p>
-      <div class="next" aria-live="polite"><div class="eb" data-t="nextEb"></div><h3 id="nextH"></h3><p id="nextP"></p></div>
-      <div class="links">
-        <a href="https://tools.swissarmymum.com/sleep/" target="_blank" rel="noopener" data-t="lnkTest"></a>
-        <a href="https://www.swissarmymum.com/p/sleep" target="_blank" rel="noopener" data-t="lnkPost"></a>
-      </div>
-    </div>
-  </section>
 
   <div class="sub-card">
     <div class="sub-title" data-t="subTitle"></div>
@@ -289,13 +298,13 @@ const num=s=>big(String(s).replace(/[^\d]/g,""));
 const T={
 en:{
   area:"Sleep",langBtn:"ES",
-  eyebrow:"SAM Lab · real data from 3 open-access papers",
+  eyebrow:"SAM Lab · a lab for your own habits",
   h1:'Sleep: is it <span class="g">how long</span>, or <span class="a">how steady</span>?',
-  heroLead:"Your body keeps a timetable, not a bank account. We took the numbers straight from three peer-reviewed papers and turned them into something you can play with. Same data the researchers published. Nothing smoothed, nothing invented.",
+  heroLead:"Your body keeps a timetable, not a bank account. Two taps show where your sleep lands in three open-access papers, and one thing to try this week. Then explore the data behind it.",
   st1:"higher risk of dying early at 9 hours than at 7, in women",
   st2:"lower risk for the steadiest sleepers than for the least steady",
   st3:"people behind the hours curve, from 25 long-term studies",
-  ctaWalk:"Walk me through it ↓", ctaMine:"Skip to my sleep ↓",
+  ctaWalk:"Walk me through the data ↓", youTag:"You", seeData:"See the data behind these results ↓", dataH:"Here's the data behind it", dataP:"Three steps, straight from the papers. Tap, switch and compare.", ctaMine:"Find where your sleep lands ↓",
   papersTitle:"The papers behind this page",
   papers:[
     ["Scientific Reports · 2016","Shen, Wu & Zhang","A study of studies on sleep hours and early death: 1.5 million people in the night-sleep curve"],
@@ -386,13 +395,13 @@ ${numbersTable()}
 },
 es:{
   area:"Sueño",langBtn:"EN",
-  eyebrow:"SAM Lab · datos reales de 3 artículos en acceso abierto",
+  eyebrow:"SAM Lab · un laboratorio para tus propios hábitos",
   h1:'Sueño: ¿importa <span class="g">cuánto</span> o <span class="a">cuándo</span>?',
-  heroLead:"Tu cuerpo funciona con un horario, no con una cuenta de ahorro. Hemos tomado las cifras directamente de tres artículos científicos revisados por pares y las hemos convertido en algo con lo que puedes jugar. Los mismos datos que publicaron los investigadores. Nada suavizado, nada inventado.",
+  heroLead:"Tu cuerpo funciona con un horario, no con una cuenta de ahorro. Con dos toques ves dónde cae tu sueño en tres artículos en acceso abierto, y una cosa que probar esta semana. Después, explora los datos que hay detrás.",
   st1:"más riesgo de morir antes de tiempo con 9 horas que con 7, en mujeres",
   st2:"menos riesgo para quienes duermen con el ritmo más regular frente al más irregular",
   st3:"personas detrás de la curva de horas, de 25 estudios a largo plazo",
-  ctaWalk:"Explícamelo paso a paso ↓", ctaMine:"Ir a mi sueño ↓",
+  ctaWalk:"Explícame los datos ↓", youTag:"Tú", seeData:"Mira los datos detrás de estos resultados ↓", dataH:"Los datos que hay detrás", dataP:"Tres pasos, directamente de los artículos. Toca, cambia y compara.", ctaMine:"Descubre dónde cae tu sueño ↓",
   papersTitle:"Los artículos detrás de esta página",
   papers:[
     ["Scientific Reports · 2016","Shen, Wu y Zhang","Un estudio de estudios sobre horas de sueño y muerte prematura: 1,5 millones de personas en la curva del sueño nocturno"],
