@@ -139,6 +139,11 @@ th{color:var(--ink-mid);font-weight:600}
 footer{text-align:center;margin-top:28px;padding:20px 0 40px;border-top:1px solid var(--cream-dark)}
 footer a{font-size:13px;font-weight:600;text-decoration:none}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+.stepno.you{width:auto;min-width:38px;padding:0 16px;border-radius:999px;letter-spacing:.04em}
+.bridge{margin-top:64px;padding-top:36px;border-top:1px solid var(--cream-dark)}
+.bridge h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.01em;line-height:1.15}
+.bridge p{color:var(--ink-mid);margin-top:8px}
+.seedata{margin:16px 0 4px;font-weight:700;font-size:14.5px}.seedata a{color:inherit}
 </style>
 </head>
 <body>
@@ -162,7 +167,7 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
       <div class="stat" style="--c:var(--blue)"><div class="big" id="st2"></div><div class="lbl" data-t="st2"></div></div>
       <div class="stat" style="--c:var(--teal)"><div class="big" id="st3"></div><div class="lbl" data-t="st3"></div></div>
     </div>
-    <div class="ctas"><a class="cta primary" href="#s1" data-t="ctaWalk"></a><a class="cta ghost" href="#s4" data-t="ctaMine"></a></div>
+    <div class="ctas"><a class="cta primary" href="#s4" data-t="ctaMine"></a><a class="cta ghost" href="#s1" data-t="ctaWalk"></a></div>
     <div class="papers">
       <div class="papers-title" data-t="papersTitle"></div>
       <div class="papers-grid" id="papers"></div>
@@ -171,6 +176,30 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
 </header>
 
 <main class="wrap">
+  <section class="step" id="s4">
+    <div class="stepno you" data-t="youTag"></div>
+    <h2 data-t="s4H"></h2>
+    <p class="lead" data-t="s4Lead"></p>
+    <div class="panel">
+      <p class="q" id="q1" data-t="q1"></p>
+      <div class="two" id="lonely" role="group" aria-labelledby="q1"></div>
+      <p class="q" id="q2" data-t="q2"></p>
+      <div class="rhythm" id="week" role="group" aria-labelledby="q2"></div>
+      <div class="mine" aria-live="polite">
+        <div class="result"><div class="eb" data-t="mAeb"></div><div class="ttl" id="m1t"></div><div class="main" id="m1"></div><div class="sub" id="m1s"></div></div>
+        <div class="result blu"><div class="eb" data-t="mNeb"></div><div class="ttl" id="m2t"></div><div class="main" id="m2"></div><div class="sub" id="m2s"></div><div class="sub" id="m2r"></div></div>
+      </div>
+      <p class="note" data-t="mineNote"></p>
+      <div class="next" aria-live="polite"><div class="eb" data-t="nextEb"></div><h3 id="nextH"></h3><p id="nextP"></p></div>
+      <p class="seedata"><a href="#s1" data-t="seeData"></a></p>
+      <div class="links">
+        <a href="https://www.swissarmymum.com/p/the-quality-of-your-relationships" target="_blank" rel="noopener" data-t="lnkPost"></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="bridge"><h2 data-t="dataH"></h2><p data-t="dataP"></p></div>
+
   <section class="step" id="s1">
     <div class="stepno">1</div>
     <h2 data-t="s1H"></h2>
@@ -213,26 +242,6 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
     <p class="punch" data-t="s3Punch"></p>
   </section>
 
-  <section class="step" id="s4">
-    <div class="stepno">4</div>
-    <h2 data-t="s4H"></h2>
-    <p class="lead" data-t="s4Lead"></p>
-    <div class="panel">
-      <p class="q" id="q1" data-t="q1"></p>
-      <div class="two" id="lonely" role="group" aria-labelledby="q1"></div>
-      <p class="q" id="q2" data-t="q2"></p>
-      <div class="rhythm" id="week" role="group" aria-labelledby="q2"></div>
-      <div class="mine" aria-live="polite">
-        <div class="result"><div class="eb" data-t="mAeb"></div><div class="ttl" id="m1t"></div><div class="main" id="m1"></div><div class="sub" id="m1s"></div></div>
-        <div class="result blu"><div class="eb" data-t="mNeb"></div><div class="ttl" id="m2t"></div><div class="main" id="m2"></div><div class="sub" id="m2s"></div><div class="sub" id="m2r"></div></div>
-      </div>
-      <p class="note" data-t="mineNote"></p>
-      <div class="next" aria-live="polite"><div class="eb" data-t="nextEb"></div><h3 id="nextH"></h3><p id="nextP"></p></div>
-      <div class="links">
-        <a href="https://www.swissarmymum.com/p/the-quality-of-your-relationships" target="_blank" rel="noopener" data-t="lnkPost"></a>
-      </div>
-    </div>
-  </section>
 
   <div class="sub-card">
     <div class="sub-title" data-t="subTitle"></div>
@@ -334,14 +343,14 @@ const T={
 en:{
   title:"SAM Lab: Connection",
   area:"Connection",langBtn:"ES",langAria:"Cambiar a español",
-  eyebrow:"SAM Lab · real data from 3 open-access papers",
+  eyebrow:"SAM Lab · a lab for your own habits",
   h1:'Connection: is it <span class="r">who\'s around</span>, or <span class="b">how it feels</span>?',
-  heroLead:"Three big reviews followed hundreds of thousands of people for years. Explore which kinds of connection went with living longer, whether having few people around or feeling lonely mattered more, and where your own week lands.",
+  heroLead:"Three big reviews followed hundreds of thousands of people for years. Two taps show where your own week lands in them, and one small thing to try. Then explore which kinds of connection went with living longer.",
   st1:()=>`higher odds of surviving for people with stronger social relationships than for those with weaker ones. ${A.overall.k} studies, ${num(A.overall.n)} people.`,
   st2:()=>`higher risk of dying for women aged ${P2.age[0]} and over with few social contacts, compared with women who had more.`,
   st3:"higher odds of surviving for people connected in several ways at once (partner, contacts and groups), compared with people low on all of them.",
   or:"or",
-  ctaWalk:"Walk me through it ↓", ctaMine:"Skip to my connection ↓",
+  ctaWalk:"Walk me through the data ↓", youTag:"You", seeData:"See the data behind these results ↓", dataH:"Here's the data behind it", dataP:"Three steps, straight from the papers. Tap, switch and compare.", ctaMine:"Find where your connection lands ↓",
   papersTitle:"The papers behind this page",
   papers:()=>[
     ["PLOS Medicine · 2010","Holt-Lunstad, Smith & Layton",`Did people with more connection live longer? ${A.overall.k} studies.`],
@@ -474,14 +483,14 @@ ${numbersTable()}
 es:{
   title:"SAM Lab: Conexión",
   area:"Conexión",langBtn:"EN",langAria:"Switch to English",
-  eyebrow:"SAM Lab · datos reales de 3 artículos en acceso abierto",
+  eyebrow:"SAM Lab · un laboratorio para tus propios hábitos",
   h1:'Conexión: ¿importa <span class="r">quién está cerca</span> o <span class="b">cómo te sientes</span>?',
-  heroLead:"Tres grandes revisiones siguieron durante años a cientos de miles de personas. Descubre qué tipos de conexión se asociaron con vivir más, si pesó más tener poca gente alrededor o sentir soledad, y dónde cae tu propia semana.",
+  heroLead:"Tres grandes revisiones siguieron durante años a cientos de miles de personas. Con dos toques ves dónde cae tu propia semana en ellas, y una pequeña cosa que probar. Después, explora qué tipos de conexión se asociaron con vivir más.",
   st1:()=>`más posibilidades de sobrevivir para las personas con relaciones sociales más fuertes que para las que las tenían más débiles. ${A.overall.k} estudios, ${num(A.overall.n)} personas.`,
   st2:()=>`más riesgo de morir para las mujeres de ${P2.age[0]} años o más con pocos contactos sociales, comparadas con las que tenían más.`,
   st3:"más posibilidades de sobrevivir para las personas conectadas de varias formas a la vez (pareja, contactos y grupos), comparadas con las que puntuaban bajo en todas.",
   or:"o",
-  ctaWalk:"Explícamelo paso a paso ↓", ctaMine:"Ir a mi caso ↓",
+  ctaWalk:"Explícame los datos ↓", youTag:"Tú", seeData:"Mira los datos detrás de estos resultados ↓", dataH:"Los datos que hay detrás", dataP:"Tres pasos, directamente de los artículos. Toca, cambia y compara.", ctaMine:"Descubre dónde cae tu conexión ↓",
   papersTitle:"Los artículos detrás de esta página",
   papers:()=>[
     ["PLOS Medicine · 2010","Holt-Lunstad, Smith y Layton",`¿Vivían más las personas con más conexión? ${A.overall.k} estudios.`],
