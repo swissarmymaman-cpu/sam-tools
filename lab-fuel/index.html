@@ -176,6 +176,11 @@ th{color:var(--ink-mid);font-weight:600}
 footer{text-align:center;margin-top:28px;padding:20px 0 40px;border-top:1px solid var(--cream-dark)}
 footer a{font-size:13px;font-weight:600;text-decoration:none}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+.stepno.you{width:auto;min-width:38px;padding:0 16px;border-radius:999px;letter-spacing:.04em}
+.bridge{margin-top:64px;padding-top:36px;border-top:1px solid var(--cream-dark)}
+.bridge h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.01em;line-height:1.15}
+.bridge p{color:var(--ink-mid);margin-top:8px}
+.seedata{margin:16px 0 4px;font-weight:700;font-size:14.5px}.seedata a{color:inherit}
 </style>
 </head>
 <body>
@@ -199,7 +204,7 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
       <div class="stat" style="--c:var(--green-mid)"><div class="big" id="st2"></div><div class="lbl" data-t="st2"></div></div>
       <div class="stat cut" style="--c:var(--blue)"><div class="big" id="st3"></div><div class="lbl" data-t="st3"></div></div>
     </div>
-    <div class="ctas"><a class="cta primary" href="#s1" data-t="ctaWalk"></a><a class="cta ghost" href="#s4" data-t="ctaMine"></a></div>
+    <div class="ctas"><a class="cta primary" href="#s4" data-t="ctaMine"></a><a class="cta ghost" href="#s1" data-t="ctaWalk"></a></div>
     <div class="papers">
       <div class="papers-title" data-t="papersTitle"></div>
       <div class="papers-grid" id="papers"></div>
@@ -208,6 +213,32 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
 </header>
 
 <main class="wrap">
+  <section class="step" id="s4">
+    <div class="stepno you" data-t="youTag"></div>
+    <h2 data-t="s4H"></h2>
+    <p class="lead" data-t="s4Lead"></p>
+    <div class="panel">
+      <p class="q" id="q1" data-t="q1"></p>
+      <div class="opts" id="opts1" role="group" aria-labelledby="q1"></div>
+      <p class="q" id="q2" data-t="q2"></p>
+      <div class="opts blu" id="opts2" role="group" aria-labelledby="q2"></div>
+      <div class="mine" aria-live="polite">
+        <div class="result"><div class="eb" data-t="m1eb"></div><div class="main" id="m1"></div><div class="sub" id="m1s"></div></div>
+        <div class="result"><div class="eb" data-t="m2eb"></div><div class="main" id="m2"></div><div class="sub" id="m2s"></div></div>
+        <div class="result blu"><div class="eb" data-t="m3eb"></div><div class="main" id="m3"></div><div class="sub" id="m3s"></div></div>
+      </div>
+      <p class="note" data-t="mineNote"></p>
+      <div class="next" aria-live="polite"><div class="eb" data-t="nextEb"></div><h3 id="nextH"></h3><p id="nextP"></p></div>
+      <p class="seedata"><a href="#s1" data-t="seeData"></a></p>
+      <div class="links">
+        <a href="https://www.swissarmymum.com/p/gut-health-the-metabolic-ally-youre" target="_blank" rel="noopener" data-t="lnkTest"></a>
+        <a href="https://www.swissarmymum.com/p/stabilize-blood-sugar-metabolic-health" target="_blank" rel="noopener" data-t="lnkPost"></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="bridge"><h2 data-t="dataH"></h2><p data-t="dataP"></p></div>
+
   <section class="step" id="s1">
     <div class="stepno">1</div>
     <h2 data-t="s1H"></h2>
@@ -256,28 +287,6 @@ footer a{font-size:13px;font-weight:600;text-decoration:none}
     </div>
   </section>
 
-  <section class="step" id="s4">
-    <div class="stepno">4</div>
-    <h2 data-t="s4H"></h2>
-    <p class="lead" data-t="s4Lead"></p>
-    <div class="panel">
-      <p class="q" id="q1" data-t="q1"></p>
-      <div class="opts" id="opts1" role="group" aria-labelledby="q1"></div>
-      <p class="q" id="q2" data-t="q2"></p>
-      <div class="opts blu" id="opts2" role="group" aria-labelledby="q2"></div>
-      <div class="mine" aria-live="polite">
-        <div class="result"><div class="eb" data-t="m1eb"></div><div class="main" id="m1"></div><div class="sub" id="m1s"></div></div>
-        <div class="result"><div class="eb" data-t="m2eb"></div><div class="main" id="m2"></div><div class="sub" id="m2s"></div></div>
-        <div class="result blu"><div class="eb" data-t="m3eb"></div><div class="main" id="m3"></div><div class="sub" id="m3s"></div></div>
-      </div>
-      <p class="note" data-t="mineNote"></p>
-      <div class="next" aria-live="polite"><div class="eb" data-t="nextEb"></div><h3 id="nextH"></h3><p id="nextP"></p></div>
-      <div class="links">
-        <a href="https://www.swissarmymum.com/p/gut-health-the-metabolic-ally-youre" target="_blank" rel="noopener" data-t="lnkTest"></a>
-        <a href="https://www.swissarmymum.com/p/stabilize-blood-sugar-metabolic-health" target="_blank" rel="noopener" data-t="lnkPost"></a>
-      </div>
-    </div>
-  </section>
 
   <div class="sub-card">
     <div class="sub-title" data-t="subTitle"></div>
@@ -404,14 +413,14 @@ const sc=k=>DATA.p1_score[k];
 const T={
 en:{
   area:"Fuel",langBtn:"ES",langAria:"Ver esta página en español",
-  eyebrow:"SAM Lab · real data from three open-access papers",
+  eyebrow:"SAM Lab · a lab for your own habits",
   h1:'Fuel: is it what you <span class="g">add</span>, or what you <span class="b">cut</span>?',
-  heroLead:"Big food studies look at what people eat most days, not at any single meal. Here you can explore what three of them found about two everyday habits: eating Mediterranean-style, and eating ultra-processed food. Real numbers, straight from the papers.",
+  heroLead:"Big food studies look at what people eat most days, not at any single meal. Two taps show where your everyday plate lands in three open-access papers, and the one thing to add first. Then explore the data behind it.",
   st1:"less heart and circulation disease (heart attacks, strokes) in people who ate the most Mediterranean-style, compared with those who ate the least",
   st2:"lower risk of a first heart attack, stroke or similar in women who ate more Mediterranean-style, with smoking, exercise and menopause taken into account",
   st3:()=>`higher risk of dying early per extra ${pc(DATA.p2_per_step)} of daily calories from ultra-processed food`,
   vs:"vs",
-  ctaWalk:"Walk me through it ↓", ctaMine:"Skip to my plate ↓",
+  ctaWalk:"Walk me through the data ↓", youTag:"You", seeData:"See the data behind these results ↓", dataH:"Here's the data behind it", dataP:"Three steps, straight from the papers. Tap, switch and compare.", ctaMine:"Find where your plate lands ↓",
   papersTitle:"The papers behind this page",
   papers:()=>[
     ["European Journal of Epidemiology · "+yr("a"),"Galbete et al.","A study of the studies: published reviews of long-term studies, checked and graded"],
@@ -555,14 +564,14 @@ ${numbersTable()}
 },
 es:{
   area:"Alimentación",langBtn:"EN",langAria:"View this page in English",
-  eyebrow:"SAM Lab · datos reales de tres artículos en acceso abierto",
+  eyebrow:"SAM Lab · un laboratorio para tus propios hábitos",
   h1:'Alimentación: ¿cuenta más lo que <span class="g">sumas</span> o lo que <span class="b">quitas</span>?',
-  heroLead:"Los grandes estudios de alimentación miran lo que la gente come casi todos los días, no una comida suelta. Aquí puedes explorar lo que encontraron tres de ellos sobre dos hábitos cotidianos: comer a la mediterránea y comer ultraprocesados. Cifras reales, tal cual vienen en los artículos.",
+  heroLead:"Los grandes estudios de alimentación miran lo que la gente come casi todos los días, no una comida suelta. Con dos toques ves dónde cae tu plato de cada día en tres artículos en acceso abierto, y lo primero que conviene añadir. Después, explora los datos que hay detrás.",
   st1:"menos enfermedad del corazón y la circulación (infartos, ictus) entre quienes más comían a la mediterránea, comparados con quienes menos",
   st2:"menos riesgo de un primer infarto, ictus o similar en mujeres que comían más a la mediterránea, teniendo en cuenta tabaco, ejercicio y menopausia",
   st3:()=>`más riesgo de morir antes de tiempo por cada ${pc(DATA.p2_per_step)} más de las calorías diarias procedentes de ultraprocesados`,
   vs:"vs",
-  ctaWalk:"Explícamelo paso a paso ↓", ctaMine:"Ir a mi plato ↓",
+  ctaWalk:"Explícame los datos ↓", youTag:"Tú", seeData:"Mira los datos detrás de estos resultados ↓", dataH:"Los datos que hay detrás", dataP:"Tres pasos, directamente de los artículos. Toca, cambia y compara.", ctaMine:"Descubre dónde cae tu plato ↓",
   papersTitle:"Los artículos detrás de esta página",
   papers:()=>[
     ["European Journal of Epidemiology · "+yr("a"),"Galbete y cols.","Un estudio de estudios: revisiones publicadas de estudios a largo plazo, analizadas y calificadas"],
